@@ -67,6 +67,7 @@ void AskQuit();
 void EnterBet();
 void writeMachine();
 void WatchSlotMachine();
+void DisplayCredits();
 
 
 int main() {
@@ -108,6 +109,10 @@ void Input() {
 		DisplayMenu();
 		
 		if (GetKeyState('1') & 0x8000) { game.state = 2; game.displayChanged = false; };
+		if (GetKeyState('2') & 0x8000) { game.state = 2; game.displayChanged = false; };
+		if (GetKeyState('3') & 0x8000) { game.state = 2; game.displayChanged = false; };
+		if (GetKeyState('4') & 0x8000) { game.state = 10; game.displayChanged = false; };
+
 		break;
 
 	case 2:
@@ -198,6 +203,10 @@ void Input() {
 	case 4:
 		WatchSlotMachine();
 		break;
+
+	case 10:
+		DisplayCredits();
+		break;
 	}
 
 	if (GetKeyState('M') & 0x8000) { game.state = 1; game.displayChanged = false; }
@@ -228,6 +237,25 @@ void DisplayMenu() {
 	game.mainText.lines.push_back("1) Play the Game!");
 	game.mainText.lines.push_back("2) View my bank acount!");
 	game.mainText.lines.push_back("3) Quit!");
+	game.mainText.lines.push_back("4) View the Credits!");
+	game.displayChanged = true;
+}
+
+void DisplayCredits() {
+	if (game.displayChanged) return;
+	ClearTextCenter();
+	game.mainText.lines.push_back("");
+	game.mainText.lines.push_back("This game was made with love my me:");
+	game.mainText.lines.push_back("KeaneCarotenuto@gmail.com");
+	game.mainText.lines.push_back("");
+	game.mainText.lines.push_back("I used ascii art from:");
+	game.mainText.lines.push_back("www.oocities.org/spunk1111/electro.htm");
+	game.mainText.lines.push_back("");
+	game.mainText.lines.push_back("It was requested to include the link below:");
+	game.mainText.lines.push_back("www.ascii-art.com");
+	game.mainText.lines.push_back("Unfortunately this link does not work.");
+	game.mainText.lines.push_back("");
+	game.mainText.lines.push_back("Press 'M' to go back to the Menu.");
 	game.displayChanged = true;
 }
 
@@ -296,7 +324,7 @@ void writeMachine() {
 	game.mainText.lines.push_back("       |_____/__\\____|");
 	game.mainText.lines.push_back("      /###############\\");
 	game.mainText.lines.push_back("     /#################\\");
-	game.mainText.lines.push_back("    |===================|");
+	game.mainText.lines.push_back("    |JGS================|");
 }
 
 void DisplayInfortmation() {
