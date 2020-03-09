@@ -33,6 +33,7 @@ public:
 	class MainTest {
 	public:
 		vector<string> lines;
+		vector<string> bankStatements{"Deposit: $1000    From: Mom"};
 		Position position{ 0,1 };
 
 	}mainText;
