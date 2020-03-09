@@ -16,10 +16,11 @@ class Game {
 public:
 	bool running = true;
 	bool quitting = false;
-	int width;
-	int height;
-	time_t startTime;
-	time_t askQuitTime;
+
+	int state = 1;
+
+	time_t startTime = 0;
+	time_t askQuitTime = 0;
 
 	string title = "Welcome to Slots!";
 	
@@ -53,8 +54,11 @@ void GotoXY(Position pos, int multi);
 void Input();
 void UpdateScreen();
 void ClearRightText();
+void ClearTextCenter();
 void DisplayInfortmation();
 void DisplayControls();
+void DisplayMenu();
+void DisplaySlot();
 void AskQuit();
 
 
@@ -72,13 +76,12 @@ int main() {
 }
 
 void Start() {
-	Position tempPos{ ((game.rightText.position.x - game.position.x - game.title.length())/2),(game.position.y)};
+	Position tempPos{ (((game.rightText.position.x) - (game.position.x) - static_cast<int>(game.title.length()))/2),(game.position.y)};
 	Print(tempPos, game.title, 14);
 
 	tempPos.x = game.rightText.position.x;
 	tempPos.y = game.rightText.position.y - 1;
-	Print(tempPos, "'C' to open Controls." , 14);
-
+	Print(tempPos, "'C' to open Controls." , 10);
 }
 
 void Update() {
@@ -93,6 +96,22 @@ void Update() {
 }
 
 void Input() {
+	switch (game.state) {
+	case 1:
+		DisplayMenu();
+		
+		if (GetKeyState('F') & 0x8000) { cout << "here"; game.state = 2; };
+		break;
+
+	case 2:
+		DisplaySlot();
+		break;
+
+	case 3:
+		DisplaySlot();
+		break;
+	}
+
 	if (GetKeyState('Q') & 0x8000) {
 		if (game.quitting) {
 			game.running = false;
@@ -111,12 +130,19 @@ void Input() {
 
 }
 
-void AskQuit() {
-	game.askQuitTime = time(NULL);
-	game.quitting = true;
-	ClearRightText();
-	game.rightText.lines.push_back("Are you sure you want to quit?");
-	game.rightText.lines.push_back("Press 'Q' again to quit...");
+void DisplayMenu() {
+	ClearTextCenter();
+	game.mainText.lines.push_back("");
+	game.mainText.lines.push_back("What would you like to do?");
+	game.mainText.lines.push_back("1) Play the Game!");
+	game.mainText.lines.push_back("2) View my bank acount!");
+	game.mainText.lines.push_back("3) Quit!");
+}
+
+void DisplaySlot() {
+	ClearTextCenter();
+	game.mainText.lines.push_back("");
+	game.mainText.lines.push_back("If you dont know what to do, press 'I'!");
 }
 
 void DisplayInfortmation() {
@@ -134,9 +160,17 @@ void DisplayControls() {
 	game.rightText.lines.push_back("Pressing 'Q' will quit the game.");
 }
 
+void AskQuit() {
+	game.askQuitTime = time(NULL);
+	game.quitting = true;
+	ClearRightText();
+	game.rightText.lines.push_back("Are you sure you want to quit?");
+	game.rightText.lines.push_back("Press 'Q' again to quit...");
+}
+
 void ClearRightText() {
 	int i = 0;
-	for (int y = game.rightText.position.y; y < (game.rightText.lines.size() + game.rightText.position.y); y++) {
+	for (int y = game.rightText.position.y; y < (static_cast<int>(game.rightText.lines.size()) + game.rightText.position.y); y++) {
 		for (int x = game.rightText.position.x; x < (game.rightText.position.x + game.rightText.lines[i].length()); x++) {
 			Position tempPos{ x, y };
 			Print(tempPos, " ", 0);
@@ -144,8 +178,21 @@ void ClearRightText() {
 		i++;
 	}
 	for (string str : game.rightText.lines) {
-		if (str == "'C' to open Controls.") { continue; }
 		game.rightText.lines.pop_back();
+	}
+}
+
+void ClearTextCenter() {
+	int i = 0;
+	for (int y = game.mainText.position.y; y < (game.mainText.lines.size() + game.mainText.position.y); y++) {
+		for (int x = game.mainText.position.x; x < (game.mainText.position.x + game.mainText.lines[i].length()); x++) {
+			Position tempPos{ x, y };
+			Print(tempPos, " ", 0);
+		}
+		i++;
+	}
+	for (string str : game.mainText.lines) {
+		game.mainText.lines.pop_back();
 	}
 }
 
@@ -153,6 +200,11 @@ void UpdateScreen() {
 	for (int i = 0; i < game.rightText.lines.size(); i++) {
 		Position tempPos{ game.rightText.position.x, game.rightText.position.y + i };
 		Print(tempPos, game.rightText.lines[i], 10);
+	}
+
+	for (int i = 0; i < game.mainText.lines.size(); i++) {
+		Position tempPos{ game.mainText.position.x, game.mainText.position.y + i };
+		Print(tempPos, game.mainText.lines[i], 14);
 	}
 	
 }
