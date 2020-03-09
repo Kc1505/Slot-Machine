@@ -3,7 +3,6 @@
 #include <time.h>
 #include <string>
 #include <vector>
-#include <cstdlib>
 
 using namespace std;
 
@@ -21,13 +20,22 @@ public:
 	int height;
 	time_t startTime;
 	time_t askQuitTime;
+
+	string title = "Welcome to Slots!";
 	
-	Position position{5,0};
+	Position position{0,0};
+
+	class MainTest {
+	public:
+		vector<string> lines;
+		Position position{ 0,1 };
+
+	}mainText;
 
 	class RightText {
 	public:
 		vector<string> lines;
-		Position position{40,0};
+		Position position{40,1};
 
 	}rightText;
 
@@ -60,10 +68,13 @@ int main() {
 	return 0;
 }
 
-void Start() { 
-	game.rightText.lines.push_back("'C' to open Controls.");
+void Start() {
+	Position tempPos{ ((game.rightText.position.x - game.position.x - game.title.length())/2),(game.position.y)};
+	Print(tempPos, game.title, 14);
 
-	Print(game.position, "Welcome to Slots!", 14);
+	tempPos.x = game.rightText.position.x;
+	tempPos.y = game.rightText.position.y - 1;
+	Print(tempPos, "'C' to open Controls." , 14);
 
 }
 
@@ -121,12 +132,13 @@ void DisplayControls() {
 }
 
 void ClearRightText() {
-	for (int y = 1; y < game.rightText.lines.size(); y++) {
-		for (int x = 0; x < game.rightText.lines[y].length(); x++) {
-			Position tempPos{ game.rightText.position.x + x, game.rightText.position.y + y };
+	int i = 0;
+	for (int y = game.rightText.position.y; y < (game.rightText.lines.size() + game.rightText.position.y); y++) {
+		for (int x = game.rightText.position.x; x < (game.rightText.position.x + game.rightText.lines[i].length()); x++) {
+			Position tempPos{ x, y };
 			Print(tempPos, " ", 0);
 		}
-
+		i++;
 	}
 	for (string str : game.rightText.lines) {
 		if (str == "'C' to open Controls.") { continue; }
