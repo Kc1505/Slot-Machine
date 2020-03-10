@@ -451,7 +451,7 @@ void DisplayWinnings() {
 		game.afterPrint.push_back({ {10,12}, "TRIPLES", 10 });
 		game.currentMoney += game.betAmount * 3;
 		game.mainText.lines.push_back("You Just Won $" + to_string(game.betAmount * 3));
-		game.mainText.bankStatements.push_back("Recieved: " + to_string(game.betAmount * 3) + "    From: Casino");
+		game.mainText.bankStatements.push_back("Recieved: $" + to_string(game.betAmount * 3) + "    From: Casino");
 	}
 	else if (game.slotNumbers[1][0] == game.slotNumbers[1][1] ||
 		game.slotNumbers[1][0] == game.slotNumbers[1][2] ||
@@ -515,9 +515,9 @@ void writeMachine() {
 	game.mainText.lines.push_back("          .-------.");
 	game.mainText.lines.push_back("       oO{- SLOTS -}Oo");
 	game.mainText.lines.push_back("       .=============. __");
-	game.mainText.lines.push_back("       |  1   2   3  |(  )");
-	game.mainText.lines.push_back("       |-[7] [7] [7]-| ||");
-	game.mainText.lines.push_back("       |  4   5   6  | ||");
+	game.mainText.lines.push_back("       |  " + to_string(game.slotNumbers[0][0]) + "   " + to_string(game.slotNumbers[0][1]) + "   " + to_string(game.slotNumbers[0][2]) + "  |(  )");
+	game.mainText.lines.push_back("       |-["+to_string(game.slotNumbers[1][0])+"] [" + to_string(game.slotNumbers[1][1]) + "] [" + to_string(game.slotNumbers[1][2]) + "]-| ||");
+	game.mainText.lines.push_back("       |  " + to_string(game.slotNumbers[2][0]) + "   " + to_string(game.slotNumbers[2][1]) + "   " + to_string(game.slotNumbers[2][2]) + "  | ||");
 	game.mainText.lines.push_back("       |=============|_||");
 	game.mainText.lines.push_back("       |  DOUBLES    |--'");
 	game.mainText.lines.push_back("       |  TRIPLES    |");
