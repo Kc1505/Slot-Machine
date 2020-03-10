@@ -155,6 +155,7 @@ void Input() {
 				game.betAmount += 100;
 			}
 			else {
+				game.betAmount = game.currentMoney;
 				for (int i = 0; i < game.mainText.lines.size(); i++) {
 					if (game.mainText.lines[i] != "You dont have enough money to go higher!") {
 						fail = true;
@@ -173,6 +174,9 @@ void Input() {
 				game.betAmount -= 100;
 			}
 			else {
+				if (game.currentMoney >= 1) {
+					game.betAmount = 1;
+				}
 				for (int i = 0; i < game.mainText.lines.size(); i++) {
 					if (game.mainText.lines[i] != "Cant go lower!") {
 						fail = true;
