@@ -33,7 +33,7 @@ public:
 	int state = 1;
 
 	//Money and bet amount of player.
-	int currentMoney = 1000;
+	int currentMoney = 2000;
 	int betAmount = 1;
 
 	//The current slot numbers at any given point. (used for rolling effect, and checking win).
@@ -56,7 +56,7 @@ public:
 	class MainText {
 	public:
 		vector<string> lines;
-		vector<string> bankStatements{"Recieved: $1000    From: Mom"};
+		vector<string> bankStatements{"Recieved: $2000    From: Mom"};
 		Position position{ 0,1 };
 
 	}mainText;
@@ -65,7 +65,7 @@ public:
 	class RightText {
 	public:
 		vector<string> lines;
-		Position position{45,1};
+		Position position{50,1};
 
 	}rightText;
 
@@ -138,9 +138,9 @@ void Input() {
 		DisplayMenu();
 		
 		if (GetKeyState('1') & 0x8000) { game.state = 2; game.displayChanged = false; };
-		if (GetKeyState('2') & 0x8000) { game.state = 6; game.displayChanged = false; };
+		if (GetKeyState('2') & 0x8000) { game.state = 10; game.displayChanged = false; };
 		if (GetKeyState('3') & 0x8000) { game.running = false; };
-		if (GetKeyState('4') & 0x8000) { game.state = 10; game.displayChanged = false; };
+		if (GetKeyState('4') & 0x8000) { game.state = 6; game.displayChanged = false; };
 		if (GetKeyState('I') & 0x8000) {
 			DisplayInformation();
 		}
@@ -284,10 +284,14 @@ void DisplayMenu() {
 	ClearCenterText();
 	game.mainText.lines.push_back("");
 	game.mainText.lines.push_back("What would you like to do?");
+	game.mainText.lines.push_back("");
 	game.mainText.lines.push_back("1) Play the Game!");
-	game.mainText.lines.push_back("2) View my bank acount!");
+	game.mainText.lines.push_back("2) View the Credits!");
 	game.mainText.lines.push_back("3) Quit :(");
-	game.mainText.lines.push_back("4) View the Credits!");
+	game.mainText.lines.push_back("4) View my bank acount!");
+	game.mainText.lines.push_back("");
+	game.mainText.lines.push_back("");
+	game.mainText.lines.push_back("Balance: $" + to_string(game.currentMoney));
 
 	DisplayInformation();
 	game.rightText.lines.push_back("");
@@ -345,7 +349,7 @@ void DisplaySlot() {
 	if (game.displayChanged) return;
 	ClearCenterText();
 	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("Good Luck and Have Fun!");
+	game.mainText.lines.push_back("You Approach the Slot Machine");
 	game.mainText.lines.push_back("");
 	writeMachine();
 	game.mainText.lines.push_back("");
@@ -366,7 +370,7 @@ void EnterBet() {
 	if (game.displayChanged) return;
 	ClearCenterText();
 	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("Good Luck and Have Fun!");
+	game.mainText.lines.push_back("You begin to enter your bet amount");
 	game.mainText.lines.push_back("");
 	writeMachine();
 	game.mainText.lines.push_back("");
@@ -396,7 +400,7 @@ void WatchSlotMachine() {
 
 	ClearCenterText();
 	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("Good Luck and Have Fun!");
+	game.mainText.lines.push_back("You Watch as the Machine spins");
 	game.mainText.lines.push_back("");
 	writeMachine();
 	game.mainText.lines.push_back("");
@@ -438,7 +442,7 @@ void WatchSlotMachine() {
 
 	ClearCenterText();
 	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("Good Luck and Have Fun!");
+	game.mainText.lines.push_back("The machine stops Spinning");
 	game.mainText.lines.push_back("");
 	writeMachine();
 	game.mainText.lines.push_back("");
@@ -457,7 +461,7 @@ void DisplayWinnings() {
 	ClearCenterText();
 	
 	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("Good Luck and Have Fun!");
+	game.mainText.lines.push_back("You look at the results of your bet");
 	game.mainText.lines.push_back("");
 	writeMachine();
 	game.mainText.lines.push_back("");
@@ -481,45 +485,45 @@ void DisplayWinnings() {
 		game.slotNumbers[1][1] == 7 &&
 		game.slotNumbers[1][2] == 7) {
 		
-		game.afterPrint.push_back({ {10,13}, "JACKPOT!", 10 });
-		game.afterPrint.push_back({ {10,12}, "TRIPLES", 12 });
-		game.afterPrint.push_back({ {10,11}, "DOUBLES", 12 });
+		game.afterPrint.push_back({ {10,13}, "JACKPOT!x10", 10 });
+		game.afterPrint.push_back({ {10,12}, "TRIPLES x5", 12 });
+		game.afterPrint.push_back({ {10,11}, "DOUBLES x3", 12 });
 
-		game.currentMoney += game.betAmount * 5;
+		game.currentMoney += game.betAmount * 10;
 
-		game.mainText.lines.push_back("You Just Gained $" + to_string(game.betAmount * 5));
-		game.mainText.bankStatements.push_back("Recieved: $" + to_string(game.betAmount * 5) + "    From: Casino");
+		game.mainText.lines.push_back("You Just Gained $" + to_string(game.betAmount * 10));
+		game.mainText.bankStatements.push_back("Recieved: $" + to_string(game.betAmount * 10) + "    From: Casino");
 	}
 	else if (game.slotNumbers[1][0] == game.slotNumbers[1][1] &&
 		game.slotNumbers[1][0] == game.slotNumbers[1][2] &&
 		game.slotNumbers[1][1] == game.slotNumbers[1][2]) {
 
-		game.afterPrint.push_back({ {10,13}, "JACKPOT!", 12 });
-		game.afterPrint.push_back({ {10,12}, "TRIPLES", 10 });
-		game.afterPrint.push_back({ {10,11}, "DOUBLES", 12 });
+		game.afterPrint.push_back({ {10,13}, "JACKPOT!x10", 12 });
+		game.afterPrint.push_back({ {10,12}, "TRIPLES x5", 10 });
+		game.afterPrint.push_back({ {10,11}, "DOUBLES x3", 12 });
+
+		game.currentMoney += game.betAmount * 5;
+
+		game.mainText.lines.push_back("You Just Won $" + to_string(game.betAmount * 5));
+		game.mainText.bankStatements.push_back("Recieved: $" + to_string(game.betAmount * 5) + "    From: Casino");
+	}
+	else if (game.slotNumbers[1][0] == game.slotNumbers[1][1] ||
+		game.slotNumbers[1][0] == game.slotNumbers[1][2] ||
+		game.slotNumbers[1][1] == game.slotNumbers[1][2]) {
+
+		game.afterPrint.push_back({ {10,13}, "JACKPOT!x10", 12 });
+		game.afterPrint.push_back({ {10,12}, "TRIPLES x5", 12 });
+		game.afterPrint.push_back({ {10,11}, "DOUBLES x3", 10 });
 
 		game.currentMoney += game.betAmount * 3;
 
 		game.mainText.lines.push_back("You Just Won $" + to_string(game.betAmount * 3));
 		game.mainText.bankStatements.push_back("Recieved: $" + to_string(game.betAmount * 3) + "    From: Casino");
 	}
-	else if (game.slotNumbers[1][0] == game.slotNumbers[1][1] ||
-		game.slotNumbers[1][0] == game.slotNumbers[1][2] ||
-		game.slotNumbers[1][1] == game.slotNumbers[1][2]) {
-
-		game.afterPrint.push_back({ {10,13}, "JACKPOT!", 12 });
-		game.afterPrint.push_back({ {10,12}, "TRIPLES", 12 });
-		game.afterPrint.push_back({ {10,11}, "DOUBLES", 10 });
-
-		game.currentMoney += game.betAmount * 2;
-
-		game.mainText.lines.push_back("You Just Won $" + to_string(game.betAmount * 2));
-		game.mainText.bankStatements.push_back("Recieved: $" + to_string(game.betAmount * 2) + "    From: Casino");
-	}
 	else {
-		game.afterPrint.push_back({ {10,13}, "JACKPOT!", 12 });
-		game.afterPrint.push_back({ {10,12}, "TRIPLES", 12 });
-		game.afterPrint.push_back({ {10,11}, "DOUBLES", 12 });
+		game.afterPrint.push_back({ {10,13}, "JACKPOT!x10", 12 });
+		game.afterPrint.push_back({ {10,12}, "TRIPLES x5", 12 });
+		game.afterPrint.push_back({ {10,11}, "DOUBLES x3", 12 });
 
 		game.mainText.lines.push_back("You Just Lost $" + to_string(game.betAmount));
 	}
@@ -556,8 +560,8 @@ void DisplayWinnings() {
 
 		Sleep(5000);
 
-		game.currentMoney = 1000;
-		game.mainText.bankStatements.push_back("Recieved: $1000    From: Mom");
+		game.currentMoney = 2000;
+		game.mainText.bankStatements.push_back("Recieved: $2000    From: Mom");
 
 
 		game.state = 1;
@@ -580,9 +584,9 @@ void writeMachine() {
 	game.mainText.lines.push_back("       |-["+to_string(game.slotNumbers[1][0])+"] [" + to_string(game.slotNumbers[1][1]) + "] [" + to_string(game.slotNumbers[1][2]) + "]-| ||");
 	game.mainText.lines.push_back("       |  " + to_string(game.slotNumbers[2][0]) + "   " + to_string(game.slotNumbers[2][1]) + "   " + to_string(game.slotNumbers[2][2]) + "  | ||");
 	game.mainText.lines.push_back("       |=============|_||");
-	game.mainText.lines.push_back("       |  DOUBLES    |--'");
-	game.mainText.lines.push_back("       |  TRIPLES    |");
-	game.mainText.lines.push_back("       |  JACKPOT!   |");
+	game.mainText.lines.push_back("       |  DOUBLES x3 |--'");
+	game.mainText.lines.push_back("       |  TRIPLES x5 |");
+	game.mainText.lines.push_back("       |  JACKPOT!x10|");
 	game.mainText.lines.push_back("       |             |");
 	game.mainText.lines.push_back("       |      __ === |");
 	game.mainText.lines.push_back("       |_____/__\\____|");
@@ -600,7 +604,7 @@ void DisplayInformation() {
 	game.rightText.lines.push_back("");
 	game.rightText.lines.push_back("-The goal of the Game is to gain as much money as you can.");
 	game.rightText.lines.push_back("-To do that, bet your current money at the slot machine.");
-	game.rightText.lines.push_back("-You start with $1000, given to you by your Mom");
+	game.rightText.lines.push_back("-You start with $2000, given to you by your Mom");
 	game.rightText.lines.push_back("      (PS. she thinks it's for school...)");
 	game.rightText.lines.push_back("-If you lose all of your money,");
 	game.rightText.lines.push_back(" your Mom will surely send you some more!");
