@@ -6,12 +6,14 @@
 
 using namespace std;
 
+//Create position class to be used for other objects.
 class Position {
 public:
 	int x;
 	int y;
 };
 
+//create a class to be used to store text to be printed over existing text (to reduce screen load times).
 class AfterPrint {
 public:
 	Position position;
@@ -19,30 +21,38 @@ public:
 	int effect;
 };
 
+//Main class that stores most game values to be used throughout the code.
 class Game {
 public:
+	//Bools used to control the state of the program.
 	bool running = true;
 	bool quitting = false;
 	bool displayChanged = false;
 
+	//This int is used the most often to determine the main states of the game.
 	int state = 1;
 
+	//Money and bet amount of player.
 	int currentMoney = 1000;
 	int betAmount = 1;
 
+	//The current slot numbers at any given point. (used for rolling effect, and checking win).
 	int slotNumbers[3][3] = {
 		{1,2,3},
 		{7,7,7},
 		{4,5,6} 
 	};
 
+	//Time values to control exit prompt delay.
 	time_t startTime = 0;
 	time_t askQuitTime = 0;
 
 	string title = "Welcome to Slots!";
 	
+	//position of the game window.
 	Position position{0,0};
 
+	//The Text that is used to display the main game on the left of the console.
 	class MainText {
 	public:
 		vector<string> lines;
@@ -51,6 +61,7 @@ public:
 
 	}mainText;
 
+	//The Text that is used to display the infortmation and controls on the right of the console.
 	class RightText {
 	public:
 		vector<string> lines;
@@ -58,19 +69,18 @@ public:
 
 	}rightText;
 
+	//storing values to be printed after main screen render.
 	vector<AfterPrint> afterPrint;
 
 }game;
 
-
+//Declaring all of the functions used in the program.
 void Start();
 void Update();
-int IntInput(int min, int max);
 void Print(Position pos, string str, int effect);
-void Draw(Position pos, string str, int effect);
 void GotoXY(Position pos, int multi);
 void Input();
-void UpdateScreen();
+void UpdateScreen(bool onlyAfter = 0);
 void ClearRightText();
 void ClearCenterText();
 void DisplayInformation();
@@ -85,7 +95,7 @@ void DisplayCredits();
 void DisplayWinnings();
 void DisplayAccount();
 
-
+//Starting Mian function.
 int main() {
 	game.startTime = time(NULL);
 	srand(game.startTime);
@@ -100,6 +110,7 @@ int main() {
 	return 0;
 }
 
+//Function that is executed only once before the game actually starts, used to initialise some values.
 void Start() {
 	Position tempPos{ (((game.rightText.position.x) - (game.position.x) - static_cast<int>(game.title.length()))/2),(game.position.y)};
 	Print(tempPos, game.title, 14);
@@ -109,20 +120,21 @@ void Start() {
 	Print(tempPos, "'C' to open Controls." , 10);
 }
 
+//The Main Update Function, called after every 100ms + execute time.
 void Update() {
 	if (game.quitting && time(NULL) - game.askQuitTime  >= 5) {
 		game.quitting = false;
 		DisplayControls();
 	}
 
+	//Checks for user input.
 	Input();
-
-	UpdateScreen();
 }
 
+//Function taht checks for user input.
 void Input() {
 	switch (game.state) {
-	case 1:
+	case 1: //Menu State of the game.
 		DisplayMenu();
 		
 		if (GetKeyState('1') & 0x8000) { game.state = 2; game.displayChanged = false; };
@@ -138,17 +150,18 @@ void Input() {
 
 		break;
 
-	case 2:
+	case 2: //State to Display screen before betting starts.
 		DisplaySlot();
 
 		if (GetKeyState('E') & 0x8000) { game.state = 3; game.displayChanged = false; };
 		break;
 
-	case 3:
+	case 3: //State to Let user choose and place thier bet amount.
 		EnterBet();
 
 		if (GetKeyState('P') & 0x8000) { game.state = 4; game.displayChanged = false; };
 
+		//Increasing bet amount by 100.
 		if (GetKeyState(VK_UP) & 0x8000) {
 			int fail = false;
 			if (game.betAmount + 100 <= game.currentMoney) {
@@ -168,6 +181,7 @@ void Input() {
 			if (fail) game.mainText.lines.push_back("You dont have enough money to go higher!");;
 			
 		};
+		//Decreasing bet amount by 100.
 		if (GetKeyState(VK_DOWN) & 0x8000) {
 			int fail = false;
 			if (game.betAmount - 100 >= 1) {
@@ -189,6 +203,7 @@ void Input() {
 			if (fail) game.mainText.lines.push_back("Cant go lower!");;
 
 		};
+		//Increasing bet amount by 1.
 		if (GetKeyState(VK_RIGHT) & 0x8000) {
 			int fail = false;
 			if (game.betAmount + 1 <= game.currentMoney) {
@@ -207,6 +222,7 @@ void Input() {
 			if (fail) game.mainText.lines.push_back("You dont have enough money to go higher!");;
 
 		};
+		//Decreasing bet amount by 1.
 		if (GetKeyState(VK_LEFT) & 0x8000) {
 			int fail = false;
 			if (game.betAmount - 1 >= 1) {
@@ -227,26 +243,28 @@ void Input() {
 		};
 		break;
 
-	case 4:
+	case 4: //State that simple shows slow machine spinning.
 		WatchSlotMachine();
 		break;
 
-	case 5:
+	case 5: //State used to show the result of the slot machine spinning (how much the player won or lost)
 		DisplayWinnings();
 		if (GetKeyState('R') & 0x8000) { game.state = 3; game.displayChanged = false; }
 		else if (GetKeyState('S') & 0x8000) { game.state = 2; game.displayChanged = false; }
 		break;
 
-	case 6:
+	case 6: //State that Displays the log of transactions that the player has made.
 		DisplayAccount();
 
-	case 10:
+	case 10: //State that Displays the credits.
 		DisplayCredits();
 		break;
 	}
 
+	//Goes back to menu state
 	if (GetKeyState('M') & 0x8000 &&  (game.state != 4)) { game.state = 1; game.displayChanged = false; }
 
+	//Asks the user if they want to quit, then quits if yes.
 	if (GetKeyState('Q') & 0x8000) {
 		if (game.quitting) {
 			game.running = false;
@@ -259,6 +277,7 @@ void Input() {
 
 }
 
+//Displays all of the text relevant to the menu.
 void DisplayMenu() {
 	if (game.displayChanged) return;
 	game.afterPrint.clear();
@@ -275,9 +294,11 @@ void DisplayMenu() {
 	game.rightText.lines.push_back("Pressing '1','2','3', or '4' will do something");
 	game.rightText.lines.push_back("(As indicated on the left)");
 
+	UpdateScreen();
 	game.displayChanged = true;
 }
 
+//Displays all of the text relevant to the user transactions.
 void DisplayAccount() {
 	if (game.displayChanged) return;
 	ClearCenterText();
@@ -294,9 +315,11 @@ void DisplayAccount() {
 
 	DisplayControls();
 
+	UpdateScreen();
 	game.displayChanged = true;
 }
 
+//Displays all of the text relevant to the credits screen.
 void DisplayCredits() {
 	if (game.displayChanged) return;
 	ClearCenterText();
@@ -312,14 +335,17 @@ void DisplayCredits() {
 	game.mainText.lines.push_back("Unfortunately this link does not work.");
 	game.mainText.lines.push_back("");
 	game.mainText.lines.push_back("Press 'M' to go back to the Menu.");
+
+	UpdateScreen();
 	game.displayChanged = true;
 }
 
+//Displays all of the text relevant to the starting slot image.
 void DisplaySlot() {
 	if (game.displayChanged) return;
 	ClearCenterText();
 	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("If you dont know what to do, press 'I'!");
+	game.mainText.lines.push_back("Good Luck and Have Fun!");
 	game.mainText.lines.push_back("");
 	writeMachine();
 	game.mainText.lines.push_back("");
@@ -328,17 +354,19 @@ void DisplaySlot() {
 	DisplayControls();
 	game.rightText.lines.push_back("");
 	game.rightText.lines.push_back("Press 'E' To Start Betting");
+	game.mainText.lines.push_back("");
+	game.mainText.lines.push_back("Press 'M' to go back to the Menu");
 
-
-
+	UpdateScreen();
 	game.displayChanged = true;
 }
 
+//Displays all of the text relevant to the player entering their bet.
 void EnterBet() {
 	if (game.displayChanged) return;
 	ClearCenterText();
 	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("If you dont know what to do, press 'I'!");
+	game.mainText.lines.push_back("Good Luck and Have Fun!");
 	game.mainText.lines.push_back("");
 	writeMachine();
 	game.mainText.lines.push_back("");
@@ -356,9 +384,11 @@ void EnterBet() {
 	game.rightText.lines.push_back("Press 'left arrow key' to decrease the bet amount 1");
 	game.rightText.lines.push_back("Press 'P' to place the bet!");
 
+	UpdateScreen();
 	game.displayChanged = true;
 }
 
+//Displays the slot machine generating random numbers, and then spinning.
 void WatchSlotMachine() {
 	if (game.displayChanged) return;
 	game.currentMoney -= game.betAmount;
@@ -366,7 +396,7 @@ void WatchSlotMachine() {
 
 	ClearCenterText();
 	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("If you dont know what to do, press 'I'!");
+	game.mainText.lines.push_back("Good Luck and Have Fun!");
 	game.mainText.lines.push_back("");
 	writeMachine();
 	game.mainText.lines.push_back("");
@@ -378,6 +408,7 @@ void WatchSlotMachine() {
 
 	game.afterPrint.clear();
 
+	//Section that actually shows the numbers spinning.
 	for (int i = 0; i < rand() % 15 + 5; i++) {
 		for (int x = 0; x < 3; x++) {
 			game.slotNumbers[2][x] = game.slotNumbers[1][x];
@@ -401,13 +432,13 @@ void WatchSlotMachine() {
 		game.afterPrint.push_back({ {14,9}, to_string(game.slotNumbers[2][1]), 14 });
 		game.afterPrint.push_back({ {18,9}, to_string(game.slotNumbers[2][2]), 14 });
 		
-		UpdateScreen();
-		Sleep(rand() % 600 + 100);
+		UpdateScreen(true);
+		Sleep(400);
 	}
 
 	ClearCenterText();
 	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("If you dont know what to do, press 'I'!");
+	game.mainText.lines.push_back("Good Luck and Have Fun!");
 	game.mainText.lines.push_back("");
 	writeMachine();
 	game.mainText.lines.push_back("");
@@ -416,15 +447,17 @@ void WatchSlotMachine() {
 	Sleep(1000);
 
 	game.state = 5;
+
 	game.displayChanged = false;
 }
 
+//Displays the result of the player's bet.
 void DisplayWinnings() {
 	if (game.displayChanged) return;
 	ClearCenterText();
 	
 	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("If you dont know what to do, press 'I'!");
+	game.mainText.lines.push_back("Good Luck and Have Fun!");
 	game.mainText.lines.push_back("");
 	writeMachine();
 	game.mainText.lines.push_back("");
@@ -443,6 +476,7 @@ void DisplayWinnings() {
 
 	game.afterPrint.clear();
 
+	//Checks what the result is and displays it to the player.
 	if (game.slotNumbers[1][0] == 7 &&
 		game.slotNumbers[1][1] == 7 &&
 		game.slotNumbers[1][2] == 7) {
@@ -497,6 +531,7 @@ void DisplayWinnings() {
 
 	game.displayChanged = true;
 
+	//Checks if the player has lost all of thier money, kicks them to the menu and gives them another $1k.
 	if (game.currentMoney <= 0) {
 		game.mainText.lines.push_back("");
 		game.mainText.lines.push_back("OOPS! Please Wait");
@@ -514,7 +549,7 @@ void DisplayWinnings() {
 		game.mainText.lines.push_back("");
 		game.mainText.lines.push_back("You Just lost the game...");
 		game.mainText.lines.push_back("You Ran out of money");
-		game.mainText.lines.push_back("The one thing you should NOT do");
+		game.mainText.lines.push_back("");
 		game.mainText.lines.push_back("Sorry, gotta kick you out of the Casino");
 		game.mainText.lines.push_back("Goodbye! (in 5 seconds)");
 		UpdateScreen();
@@ -522,6 +557,8 @@ void DisplayWinnings() {
 		Sleep(5000);
 
 		game.currentMoney = 1000;
+		game.mainText.bankStatements.push_back("Recieved: $1000    From: Mom");
+
 
 		game.state = 1;
 		game.displayChanged = false;
@@ -531,9 +568,10 @@ void DisplayWinnings() {
 		game.mainText.lines.push_back("Press 'R' to Retry");
 		game.mainText.lines.push_back("Press 'S' to Stop betting");
 	}
-	
+	UpdateScreen();
 }
 
+//Used to display the actual slot machine, instead of writng it out every time.
 void writeMachine() {
 	game.mainText.lines.push_back("          .-------.");
 	game.mainText.lines.push_back("       oO{- SLOTS -}Oo");
@@ -553,6 +591,7 @@ void writeMachine() {
 	game.mainText.lines.push_back("    |JGS================|");
 }
 
+//Displays game information on the right.
 void DisplayInformation() {
 	ClearRightText();
 	game.rightText.lines.push_back("Information:");
@@ -567,8 +606,11 @@ void DisplayInformation() {
 	game.rightText.lines.push_back(" your Mom will surely send you some more!");
 	game.rightText.lines.push_back("");
 	game.rightText.lines.push_back("Good luck and have fun!");
+
+	UpdateScreen();
 }
 
+//Displays general controls on the right.
 void DisplayControls() {
 	ClearRightText();
 	game.rightText.lines.push_back("Controls:");
@@ -577,23 +619,34 @@ void DisplayControls() {
 	game.rightText.lines.push_back("    (only in the menu)");
 	game.rightText.lines.push_back("Pressing 'M' will go back to the Menu.");
 	game.rightText.lines.push_back("Pressing 'Q' will quit the game.");
+
+	UpdateScreen();
 }
 
+//Asks the user if they want to quit on the right.
 void AskQuit() {
 	game.askQuitTime = time(NULL);
 	game.quitting = true;
 	ClearRightText();
 	game.rightText.lines.push_back("Are you sure you want to quit?");
 	game.rightText.lines.push_back("Press 'Q' again to quit...");
+
+	UpdateScreen();
 }
 
+//Clears all of the text on the right side of the screen.
 void ClearRightText() {
 	int i = 0;
-	for (int y = game.rightText.position.y; y < (static_cast<int>(game.rightText.lines.size()) + game.rightText.position.y); y++) {
-		for (int x = game.rightText.position.x; x < (game.rightText.position.x + game.rightText.lines[i].length()); x++) {
-			Position tempPos{ x, y };
-			Print(tempPos, " ", 0);
+	int lines = static_cast<int>(game.rightText.lines.size());
+
+	for (int y = game.rightText.position.y; y < (lines + game.rightText.position.y); y++) {
+		int lineLength = game.rightText.lines[i].length();
+		string toPrint;
+		for (int x = 0; x < lineLength; x++) {
+			toPrint += " ";
 		}
+		Position tempPos{ game.rightText.position.x, y };
+		Print(tempPos, toPrint, 0);
 		i++;
 	}
 	for (string str : game.rightText.lines) {
@@ -601,13 +654,18 @@ void ClearRightText() {
 	}
 }
 
+//Clears all of the text on the left/center side of the screen.
 void ClearCenterText() {
 	int i = 0;
-	for (int y = game.mainText.position.y; y < (game.mainText.lines.size() + game.mainText.position.y); y++) {
-		for (int x = game.mainText.position.x; x < (game.mainText.position.x + game.mainText.lines[i].length()); x++) {
-			Position tempPos{ x, y };
-			Print(tempPos, " ", 0);
+	int lines = static_cast<int>(game.mainText.lines.size());
+	for (int y = game.mainText.position.y; y < (lines + game.mainText.position.y); y++) {
+		int lineLength = game.mainText.lines[i].length();
+		string toPrint;
+		for (int x = 0; x < lineLength; x++) {
+			toPrint += " ";
 		}
+		Position tempPos{ game.mainText.position.x, y };
+		Print(tempPos, toPrint, 0);
 		i++;
 	}
 	for (string str : game.mainText.lines) {
@@ -615,35 +673,26 @@ void ClearCenterText() {
 	}
 }
 
-void UpdateScreen() {
-	for (int i = 0; i < game.rightText.lines.size(); i++) {
-		Position tempPos{ game.rightText.position.x, game.rightText.position.y + i };
-		Print(tempPos, game.rightText.lines[i], 10);
+//Function that decides what to write where.
+void UpdateScreen(bool onlyAfter) {
+	if (!onlyAfter) {
+		for (int i = 0; i < game.rightText.lines.size(); i++) {
+			Position tempPos{ game.rightText.position.x, game.rightText.position.y + i };
+			Print(tempPos, game.rightText.lines[i], 10);
+		}
+
+		for (int i = 0; i < game.mainText.lines.size(); i++) {
+			Position tempPos{ game.mainText.position.x, game.mainText.position.y + i };
+			Print(tempPos, game.mainText.lines[i], 14);
+		}
 	}
 
-	for (int i = 0; i < game.mainText.lines.size(); i++) {
-		Position tempPos{ game.mainText.position.x, game.mainText.position.y + i };
-		Print(tempPos, game.mainText.lines[i], 14);
-	}
-	
 	for (AfterPrint toPrint: game.afterPrint) {
 		Print(toPrint.position, toPrint.string, toPrint.effect);
 	}
 }
 
-int IntInput(int min, int max) {
-	int output;
-	cin >> output;
-	while (!cin.good() || (output < min || output > max))
-	{
-		cin.clear();
-		cin.ignore(INT_MAX, '\n');
-		cout << "\n Please only enter integers greater than " << min - 1 << ", and less than " << max + 1 << ":";
-		cin >> output;
-	}
-	return output;
-}
-
+//Used to print out text at the specified coordinate, with the specified effect.
 void Print(Position pos,string str, int effect) {
 	GotoXY(pos, 1);
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), effect);
@@ -651,13 +700,7 @@ void Print(Position pos,string str, int effect) {
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 }
 
-void Draw(Position pos, string str, int effect) {
-	GotoXY(pos, 2);
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), effect);
-	cout << str << str;
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
-}
-
+//Used to move the Console Cursor to a point on the screen for more accurate text management.
 void GotoXY(Position pos, int multi) {
 	COORD point;
 	point.X = (pos.x + game.position.x) * multi;
