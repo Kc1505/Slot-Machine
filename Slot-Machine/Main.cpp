@@ -346,7 +346,7 @@ void DisplayCredits() {
 	if (game.displayChanged) return;
 	ClearCenterText();
 	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("This game was made with love my me:");
+	game.mainText.lines.push_back("This game was made with love by me:");
 	game.mainText.lines.push_back("KeaneCarotenuto@gmail.com");
 	game.mainText.lines.push_back("");
 	game.mainText.lines.push_back("I used ascii art from:");
