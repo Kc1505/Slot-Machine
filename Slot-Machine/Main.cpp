@@ -376,7 +376,8 @@ void WatchSlotMachine() {
 	game.rightText.lines.push_back("");
 	game.rightText.lines.push_back("All you can do is watch!");
 
-	
+	game.afterPrint.clear();
+
 	for (int i = 0; i < rand() % 15 + 5; i++) {
 		for (int x = 0; x < 3; x++) {
 			game.slotNumbers[2][x] = game.slotNumbers[1][x];
@@ -438,6 +439,9 @@ void DisplayWinnings() {
 	game.rightText.lines.push_back("");
 	game.rightText.lines.push_back("Press 'R' to Retry");
 	game.rightText.lines.push_back("Press 'S' to Stop");
+
+
+	game.afterPrint.clear();
 
 	if (game.slotNumbers[1][0] == 7 &&
 		game.slotNumbers[1][1] == 7 &&
