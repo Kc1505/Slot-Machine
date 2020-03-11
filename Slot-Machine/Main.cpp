@@ -448,7 +448,11 @@ void DisplayWinnings() {
 		game.slotNumbers[1][2] == 7) {
 		
 		game.afterPrint.push_back({ {10,13}, "JACKPOT!", 10 });
+		game.afterPrint.push_back({ {10,12}, "TRIPLES", 12 });
+		game.afterPrint.push_back({ {10,11}, "DOUBLES", 12 });
+
 		game.currentMoney += game.betAmount * 5;
+
 		game.mainText.lines.push_back("You Just Gained $" + to_string(game.betAmount * 5));
 		game.mainText.bankStatements.push_back("Recieved: $" + to_string(game.betAmount * 5) + "    From: Casino");
 	}
@@ -456,8 +460,12 @@ void DisplayWinnings() {
 		game.slotNumbers[1][0] == game.slotNumbers[1][2] &&
 		game.slotNumbers[1][1] == game.slotNumbers[1][2]) {
 
+		game.afterPrint.push_back({ {10,13}, "JACKPOT!", 12 });
 		game.afterPrint.push_back({ {10,12}, "TRIPLES", 10 });
+		game.afterPrint.push_back({ {10,11}, "DOUBLES", 12 });
+
 		game.currentMoney += game.betAmount * 3;
+
 		game.mainText.lines.push_back("You Just Won $" + to_string(game.betAmount * 3));
 		game.mainText.bankStatements.push_back("Recieved: $" + to_string(game.betAmount * 3) + "    From: Casino");
 	}
@@ -465,8 +473,12 @@ void DisplayWinnings() {
 		game.slotNumbers[1][0] == game.slotNumbers[1][2] ||
 		game.slotNumbers[1][1] == game.slotNumbers[1][2]) {
 
+		game.afterPrint.push_back({ {10,13}, "JACKPOT!", 12 });
+		game.afterPrint.push_back({ {10,12}, "TRIPLES", 12 });
 		game.afterPrint.push_back({ {10,11}, "DOUBLES", 10 });
+
 		game.currentMoney += game.betAmount * 2;
+
 		game.mainText.lines.push_back("You Just Won $" + to_string(game.betAmount * 2));
 		game.mainText.bankStatements.push_back("Recieved: $" + to_string(game.betAmount * 2) + "    From: Casino");
 	}
@@ -474,6 +486,7 @@ void DisplayWinnings() {
 		game.afterPrint.push_back({ {10,13}, "JACKPOT!", 12 });
 		game.afterPrint.push_back({ {10,12}, "TRIPLES", 12 });
 		game.afterPrint.push_back({ {10,11}, "DOUBLES", 12 });
+
 		game.mainText.lines.push_back("You Just Lost $" + to_string(game.betAmount));
 	}
 	game.mainText.lines.push_back("Balance: $" + to_string(game.currentMoney));
