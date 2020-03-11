@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-
+#pragma region "Initialisation"
 					//-----------------		Initialisation     -----------------\\
 
 using namespace std;
@@ -76,6 +76,10 @@ public:
 	vector<AfterPrint> afterPrint;
 
 }game;
+#pragma endregion
+
+
+#pragma region  "Declaring Function"
 
 //Declaring all of the functions used in the program.
 void Start();
@@ -98,13 +102,12 @@ void DisplayCredits();
 void DisplayWinnings();
 void DisplayAccount();
 
+#pragma endregion
 
-					//-----------------		Foundation Functions     -----------------\\
 
+#pragma region  "Start Functions"
 //Starting Mian function.
 int main() {
-	game.startTime = time(NULL);
-	srand(game.startTime);
 
 	Start();
 
@@ -118,6 +121,9 @@ int main() {
 
 //Function that is executed only once before the game actually starts, used to initialise some values.
 void Start() {
+	game.startTime = time(NULL);
+	srand(game.startTime);
+
 	Position tempPos{ (((game.rightText.position.x) - (game.position.x) - static_cast<int>(game.title.length()))/2),(game.position.y)};
 	Print(tempPos, game.title, 14);
 
@@ -136,10 +142,10 @@ void Update() {
 	//Checks for user input.
 	Input();
 }
+#pragma endregion
 
 
-					//-----------------		Input Function     -----------------\\
-
+#pragma region "Input Function"
 //Function taht checks for user input.
 void Input() {
 	switch (game.state) {
@@ -285,10 +291,10 @@ void Input() {
 	
 
 }
+#pragma endregion
 
 
-					//-----------------		Center/Left Side Display Functions     -----------------\\
-
+#pragma region "Center/Left Side Display Functions"
 //Displays all of the text relevant to the menu.
 void DisplayMenu() {
 	if (game.displayChanged) return;
@@ -586,10 +592,10 @@ void DisplayWinnings() {
 	}
 	UpdateScreen();
 }
+#pragma endregion
 
 
-					//-----------------		Slot Machine     -----------------\\
-
+#pragma region "ASCII Slot Machine Function"
 //Used to display the actual slot machine, instead of writng it out every time.
 void writeMachine() {
 	game.mainText.lines.push_back("          .-------.");
@@ -609,10 +615,10 @@ void writeMachine() {
 	game.mainText.lines.push_back("     /#################\\");
 	game.mainText.lines.push_back("    |JGS================|");
 }
+#pragma endregion
 
 
-					//-----------------		Right Side Display Functions     -----------------\\
-
+#pragma region "Right Side Display Functions"
 //Displays game information on the right.
 void DisplayInformation() {
 	ClearRightText();
@@ -655,8 +661,10 @@ void AskQuit() {
 
 	UpdateScreen();
 }
+#pragma endregion
 
 
+#pragma region "Clear Section Functions"
 					//-----------------		Clear Functions     -----------------\\
 
 //Clears all of the text on the right side of the screen.
@@ -697,10 +705,10 @@ void ClearCenterText() {
 		game.mainText.lines.pop_back();
 	}
 }
+#pragma endregion
 
 
-					//-----------------		Update Function     -----------------\\
-
+#pragma region "Screen Update Function"
 //Function that decides what to write where.
 void UpdateScreen(bool onlyAfter) {
 	if (!onlyAfter) {
@@ -719,10 +727,10 @@ void UpdateScreen(bool onlyAfter) {
 		Print(toPrint.position, toPrint.string, toPrint.effect);
 	}
 }
+#pragma endregion
 
 
-					//-----------------		Printing Functions:     -----------------\\
-
+#pragma region "Printing Functions"
 //Used to print out text at the specified coordinate, with the specified effect.
 void Print(Position pos,string str, int effect) {
 	GotoXY(pos, 1);
@@ -738,3 +746,4 @@ void GotoXY(Position pos, int multi) {
 	point.Y = pos.y + game.position.y;
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), point);
 }
+#pragma endregion
