@@ -4,6 +4,9 @@
 #include <string>
 #include <vector>
 
+
+					//-----------------		Initialisation     -----------------\\
+
 using namespace std;
 
 //Create position class to be used for other objects.
@@ -95,6 +98,9 @@ void DisplayCredits();
 void DisplayWinnings();
 void DisplayAccount();
 
+
+					//-----------------		Foundation Functions     -----------------\\
+
 //Starting Mian function.
 int main() {
 	game.startTime = time(NULL);
@@ -130,6 +136,9 @@ void Update() {
 	//Checks for user input.
 	Input();
 }
+
+
+					//-----------------		Input Function     -----------------\\
 
 //Function taht checks for user input.
 void Input() {
@@ -276,6 +285,9 @@ void Input() {
 	
 
 }
+
+
+					//-----------------		Center/Left Side Display Functions     -----------------\\
 
 //Displays all of the text relevant to the menu.
 void DisplayMenu() {
@@ -575,6 +587,9 @@ void DisplayWinnings() {
 	UpdateScreen();
 }
 
+
+					//-----------------		Slot Machine     -----------------\\
+
 //Used to display the actual slot machine, instead of writng it out every time.
 void writeMachine() {
 	game.mainText.lines.push_back("          .-------.");
@@ -594,6 +609,9 @@ void writeMachine() {
 	game.mainText.lines.push_back("     /#################\\");
 	game.mainText.lines.push_back("    |JGS================|");
 }
+
+
+					//-----------------		Right Side Display Functions     -----------------\\
 
 //Displays game information on the right.
 void DisplayInformation() {
@@ -638,6 +656,9 @@ void AskQuit() {
 	UpdateScreen();
 }
 
+
+					//-----------------		Clear Functions     -----------------\\
+
 //Clears all of the text on the right side of the screen.
 void ClearRightText() {
 	int i = 0;
@@ -677,6 +698,9 @@ void ClearCenterText() {
 	}
 }
 
+
+					//-----------------		Update Function     -----------------\\
+
 //Function that decides what to write where.
 void UpdateScreen(bool onlyAfter) {
 	if (!onlyAfter) {
@@ -695,6 +719,9 @@ void UpdateScreen(bool onlyAfter) {
 		Print(toPrint.position, toPrint.string, toPrint.effect);
 	}
 }
+
+
+					//-----------------		Printing Functions:     -----------------\\
 
 //Used to print out text at the specified coordinate, with the specified effect.
 void Print(Position pos,string str, int effect) {
