@@ -23,6 +23,7 @@
     <ProjectGuid>{1CBA3DFD-73BC-4ADE-B864-7262A77A3CEB}</ProjectGuid>
     <RootNamespace>SlotMachine</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>SlotMachine</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
