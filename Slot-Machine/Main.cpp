@@ -342,8 +342,8 @@ void EnterBet() {
 	game.mainText.lines.push_back("");
 	writeMachine();
 	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("Money: " + to_string(game.currentMoney));
 	game.mainText.lines.push_back("Bet Amount: " + to_string(game.betAmount));
+	game.mainText.lines.push_back("Balance: $" + to_string(game.currentMoney));
 	game.mainText.lines.push_back("");
 	game.mainText.lines.push_back("Press 'P' to place the bet!");
 	game.mainText.lines.push_back("");
@@ -450,7 +450,7 @@ void DisplayWinnings() {
 		game.afterPrint.push_back({ {10,13}, "JACKPOT!", 10 });
 		game.currentMoney += game.betAmount * 5;
 		game.mainText.lines.push_back("You Just Gained $" + to_string(game.betAmount * 5));
-		game.mainText.bankStatements.push_back("Recieved: " + to_string(game.betAmount * 5) + "    From: Casino");
+		game.mainText.bankStatements.push_back("Recieved: $" + to_string(game.betAmount * 5) + "    From: Casino");
 	}
 	else if (game.slotNumbers[1][0] == game.slotNumbers[1][1] &&
 		game.slotNumbers[1][0] == game.slotNumbers[1][2] &&
@@ -476,6 +476,8 @@ void DisplayWinnings() {
 		game.afterPrint.push_back({ {10,11}, "DOUBLES", 12 });
 		game.mainText.lines.push_back("You Just Lost $" + to_string(game.betAmount));
 	}
+	game.mainText.lines.push_back("Balance: $" + to_string(game.currentMoney));
+
 
 	game.betAmount = 1;
 
