@@ -5,8 +5,6 @@
 #include <vector>
 
 #pragma region "Initialisation"
-					//-----------------		Initialisation     -----------------\\
-
 using namespace std;
 
 //Create position class to be used for other objects.
