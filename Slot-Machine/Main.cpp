@@ -468,7 +468,7 @@ void DisplayWinnings() {
 		game.afterPrint.push_back({ {10,11}, "DOUBLES", 10 });
 		game.currentMoney += game.betAmount * 2;
 		game.mainText.lines.push_back("You Just Won $" + to_string(game.betAmount * 2));
-		game.mainText.bankStatements.push_back("Recieved: " + to_string(game.betAmount * 2) + "    From: Casino");
+		game.mainText.bankStatements.push_back("Recieved: $" + to_string(game.betAmount * 2) + "    From: Casino");
 	}
 	else {
 		game.afterPrint.push_back({ {10,13}, "JACKPOT!", 12 });
