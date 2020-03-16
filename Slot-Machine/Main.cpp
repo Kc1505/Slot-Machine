@@ -445,17 +445,17 @@ void WatchSlotMachine() {
 			game.slotNumbers[0][x] = rand() % 9 + 1;
 		}
 
-		game.afterPrint.push_back({ {10,7}, to_wstring(game.slotNumbers[0][0]), 14 });
-		game.afterPrint.push_back({ {14,7}, to_wstring(game.slotNumbers[0][1]), 14 });
-		game.afterPrint.push_back({ {18,7}, to_wstring(game.slotNumbers[0][2]), 14 });
+		game.afterPrint.push_back({ {10,7}, to_wstring(game.slotNumbers[0][0]), game.slotNumbers[0][0] });
+		game.afterPrint.push_back({ {14,7}, to_wstring(game.slotNumbers[0][1]), game.slotNumbers[0][1] });
+		game.afterPrint.push_back({ {18,7}, to_wstring(game.slotNumbers[0][2]), game.slotNumbers[0][2] });
 
-		game.afterPrint.push_back({ {10,8}, to_wstring(game.slotNumbers[1][0]), 15 });
-		game.afterPrint.push_back({ {14,8}, to_wstring(game.slotNumbers[1][1]), 15 });
-		game.afterPrint.push_back({ {18,8}, to_wstring(game.slotNumbers[1][2]), 15 });
+		game.afterPrint.push_back({ {10,8}, to_wstring(game.slotNumbers[1][0]), game.slotNumbers[1][0] });
+		game.afterPrint.push_back({ {14,8}, to_wstring(game.slotNumbers[1][1]), game.slotNumbers[1][1] });
+		game.afterPrint.push_back({ {18,8}, to_wstring(game.slotNumbers[1][2]), game.slotNumbers[1][2] });
 
-		game.afterPrint.push_back({ {10,9}, to_wstring(game.slotNumbers[2][0]), 14 });
-		game.afterPrint.push_back({ {14,9}, to_wstring(game.slotNumbers[2][1]), 14 });
-		game.afterPrint.push_back({ {18,9}, to_wstring(game.slotNumbers[2][2]), 14 });
+		game.afterPrint.push_back({ {10,9}, to_wstring(game.slotNumbers[2][0]), game.slotNumbers[2][0] });
+		game.afterPrint.push_back({ {14,9}, to_wstring(game.slotNumbers[2][1]), game.slotNumbers[2][1] });
+		game.afterPrint.push_back({ {18,9}, to_wstring(game.slotNumbers[2][2]), game.slotNumbers[2][2] });
 		
 		UpdateScreen(true);
 		Sleep(400);
@@ -550,6 +550,17 @@ void DisplayWinnings() {
 	}
 	game.mainText.lines.push_back(L"Balance: $" + to_wstring(game.currentMoney));
 
+	game.afterPrint.push_back({ {10,7}, to_wstring(game.slotNumbers[0][0]), game.slotNumbers[0][0] });
+	game.afterPrint.push_back({ {14,7}, to_wstring(game.slotNumbers[0][1]), game.slotNumbers[0][1] });
+	game.afterPrint.push_back({ {18,7}, to_wstring(game.slotNumbers[0][2]), game.slotNumbers[0][2] });
+
+	game.afterPrint.push_back({ {10,8}, to_wstring(game.slotNumbers[1][0]), game.slotNumbers[1][0] });
+	game.afterPrint.push_back({ {14,8}, to_wstring(game.slotNumbers[1][1]), game.slotNumbers[1][1] });
+	game.afterPrint.push_back({ {18,8}, to_wstring(game.slotNumbers[1][2]), game.slotNumbers[1][2] });
+
+	game.afterPrint.push_back({ {10,9}, to_wstring(game.slotNumbers[2][0]), game.slotNumbers[2][0] });
+	game.afterPrint.push_back({ {14,9}, to_wstring(game.slotNumbers[2][1]), game.slotNumbers[2][1] });
+	game.afterPrint.push_back({ {18,9}, to_wstring(game.slotNumbers[2][2]), game.slotNumbers[2][2] });
 
 	game.betAmount = 1;
 
