@@ -449,9 +449,9 @@ void WatchSlotMachine() {
 		game.afterPrint.push_back({ {14,7}, to_wstring(game.slotNumbers[0][1]), 14 });
 		game.afterPrint.push_back({ {18,7}, to_wstring(game.slotNumbers[0][2]), 14 });
 
-		game.afterPrint.push_back({ {10,8}, to_wstring(game.slotNumbers[1][0]), 14 });
-		game.afterPrint.push_back({ {14,8}, to_wstring(game.slotNumbers[1][1]), 14 });
-		game.afterPrint.push_back({ {18,8}, to_wstring(game.slotNumbers[1][2]), 14 });
+		game.afterPrint.push_back({ {10,8}, to_wstring(game.slotNumbers[1][0]), 15 });
+		game.afterPrint.push_back({ {14,8}, to_wstring(game.slotNumbers[1][1]), 15 });
+		game.afterPrint.push_back({ {18,8}, to_wstring(game.slotNumbers[1][2]), 15 });
 
 		game.afterPrint.push_back({ {10,9}, to_wstring(game.slotNumbers[2][0]), 14 });
 		game.afterPrint.push_back({ {14,9}, to_wstring(game.slotNumbers[2][1]), 14 });
@@ -601,22 +601,22 @@ void DisplayWinnings() {
 #pragma region "ASCII Slot Machine Function"
 //Used to display the actual slot machine, instead of writng it out every time.
 void writeMachine() {
-	game.mainText.lines.push_back(L"          .-------.");
-	game.mainText.lines.push_back(L"       oO{- SLOTS -}Oo");
-	game.mainText.lines.push_back(L"       ┌─────────────┐ __");
-	game.mainText.lines.push_back(L"       │  " + to_wstring(game.slotNumbers[0][0]) + L"   " + to_wstring(game.slotNumbers[0][1]) + L"   " + to_wstring(game.slotNumbers[0][2]) + L"  │(  )");
-	game.mainText.lines.push_back(L"       │-["+to_wstring(game.slotNumbers[1][0])+ L"] [" + to_wstring(game.slotNumbers[1][1]) + L"] [" + to_wstring(game.slotNumbers[1][2]) + L"]-│ ││");
-	game.mainText.lines.push_back(L"       │  " + to_wstring(game.slotNumbers[2][0]) + L"   " + to_wstring(game.slotNumbers[2][1]) + L"   " + to_wstring(game.slotNumbers[2][2]) + L"  │ ││");
-	game.mainText.lines.push_back(L"       ├─────────────┤─\u2518│");
-	game.mainText.lines.push_back(L"       │  DOUBLES x3 │──\u2518");
+	game.mainText.lines.push_back(L"         ╔═════════╗");
+	game.mainText.lines.push_back(L"       ▀█║- SLOTS -║█▀");
+	game.mainText.lines.push_back(L"       ┌─┼─┬─┬─┬─┬─┼─┐ __");
+	game.mainText.lines.push_back(L"       │ │" + to_wstring(game.slotNumbers[0][0]) + L"│ │" + to_wstring(game.slotNumbers[0][1]) + L"│ │" + to_wstring(game.slotNumbers[0][2]) + L"│ │(  )");
+	game.mainText.lines.push_back(L"       ├─┤"+to_wstring(game.slotNumbers[1][0])+ L"├─┤" + to_wstring(game.slotNumbers[1][1]) + L"├─┤" + to_wstring(game.slotNumbers[1][2]) + L"├─┤ ││");
+	game.mainText.lines.push_back(L"       │ │" + to_wstring(game.slotNumbers[2][0]) + L"│ │" + to_wstring(game.slotNumbers[2][1]) + L"│ │" + to_wstring(game.slotNumbers[2][2]) + L"│ │ ││");
+	game.mainText.lines.push_back(L"       ├─┴─┴─┴─┴─┴─┴─┼─┘│");
+	game.mainText.lines.push_back(L"       │  DOUBLES x3 ├──┘");
 	game.mainText.lines.push_back(L"       │  TRIPLES x5 │");
 	game.mainText.lines.push_back(L"       │  JACKPOT!x10│");
 	game.mainText.lines.push_back(L"       │             │");
-	game.mainText.lines.push_back(L"       │      __ ─── │");
-	game.mainText.lines.push_back(L"       │_____/__\\____│");
-	game.mainText.lines.push_back(L"      /###############\\");
-	game.mainText.lines.push_back(L"     /#################\\");
-	game.mainText.lines.push_back(L"    │JGS────────────────│");
+	game.mainText.lines.push_back(L"       │ ┌─────────┐ │");
+	game.mainText.lines.push_back(L"      ┌┤ └─────────┘ ├┐");
+	game.mainText.lines.push_back(L"     ┌┘└─────────────┘└┐");
+	game.mainText.lines.push_back(L"    ┌┘╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬└┐");
+	game.mainText.lines.push_back(L"    └───────────────────┘");
 }
 #pragma endregion
 
