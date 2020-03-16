@@ -1,8 +1,12 @@
-#include <iostream>
+﻿#include <iostream>
 #include <windows.h>
 #include <time.h>
 #include <string>
 #include <vector>
+#include <locale>
+#include <codecvt>
+#include <io.h>
+#include <fcntl.h>
 
 #pragma region "Initialisation"
 using namespace std;
@@ -18,7 +22,7 @@ public:
 class AfterPrint {
 public:
 	Position position;
-	string string;
+	wstring string;
 	int effect;
 };
 
@@ -48,7 +52,7 @@ public:
 	time_t startTime = 0;
 	time_t askQuitTime = 0;
 
-	string title = "Welcome to Slots!";
+	wstring title = L"Welcome to Slots!";
 	
 	//position of the game window.
 	Position position{0,0};
@@ -56,8 +60,8 @@ public:
 	//The Text that is used to display the main game on the left of the console.
 	class MainText {
 	public:
-		vector<string> lines;
-		vector<string> bankStatements{"Recieved: $2000    From: Mom"};
+		vector<wstring> lines;
+		vector<wstring> bankStatements{L"Recieved: $2000    From: Mom"};
 		Position position{ 0,1 };
 
 	}mainText;
@@ -65,7 +69,7 @@ public:
 	//The Text that is used to display the infortmation and controls on the right of the console.
 	class RightText {
 	public:
-		vector<string> lines;
+		vector<wstring> lines;
 		Position position{50,1};
 
 	}rightText;
@@ -82,7 +86,7 @@ public:
 //Declaring all of the functions used in the program.
 void Start();
 void Update();
-void Print(Position pos, string str, int effect);
+void Print(Position pos, wstring str, int effect);
 void GotoXY(Position pos, int multi);
 void Input();
 void UpdateScreen(bool onlyAfter = 0);
@@ -106,6 +110,7 @@ void DisplayAccount();
 #pragma region  "Start Functions"
 //Starting Mian function.
 int main() {
+	_setmode(_fileno(stdout), _O_U16TEXT);
 
 	Start();
 
@@ -127,7 +132,7 @@ void Start() {
 
 	tempPos.x = game.rightText.position.x;
 	tempPos.y = game.rightText.position.y - 1;
-	Print(tempPos, "'C' to open Controls." , 10);
+	Print(tempPos, L"'C' to open Controls." , 10);
 }
 
 //The Main Update Function, called after every 100ms + execute time.
@@ -183,7 +188,7 @@ void Input() {
 			else {
 				game.betAmount = game.currentMoney;
 				for (int i = 0; i < game.mainText.lines.size(); i++) {
-					if (game.mainText.lines[i] != "You dont have enough money to go higher!") {
+					if (game.mainText.lines[i] != L"You dont have enough money to go higher!") {
 						fail = true;
 					}
 
@@ -191,7 +196,7 @@ void Input() {
 			}
 			game.displayChanged = false;
 			EnterBet();
-			if (fail) game.mainText.lines.push_back("You dont have enough money to go higher!");;
+			if (fail) game.mainText.lines.push_back(L"You dont have enough money to go higher!");;
 			
 		};
 		//Decreasing bet amount by 100.
@@ -205,7 +210,7 @@ void Input() {
 					game.betAmount = 1;
 				}
 				for (int i = 0; i < game.mainText.lines.size(); i++) {
-					if (game.mainText.lines[i] != "Cant go lower!") {
+					if (game.mainText.lines[i] != L"Cant go lower!") {
 						fail = true;
 					}
 
@@ -213,7 +218,7 @@ void Input() {
 			}
 			game.displayChanged = false;
 			EnterBet();
-			if (fail) game.mainText.lines.push_back("Cant go lower!");;
+			if (fail) game.mainText.lines.push_back(L"Cant go lower!");;
 
 		};
 		//Increasing bet amount by 1.
@@ -224,7 +229,7 @@ void Input() {
 			}
 			else {
 				for (int i = 0; i < game.mainText.lines.size(); i++) {
-					if (game.mainText.lines[i] != "You dont have enough money to go higher!") {
+					if (game.mainText.lines[i] != L"You dont have enough money to go higher!") {
 						fail = true;
 					}
 
@@ -232,7 +237,7 @@ void Input() {
 			}
 			game.displayChanged = false;
 			EnterBet();
-			if (fail) game.mainText.lines.push_back("You dont have enough money to go higher!");;
+			if (fail) game.mainText.lines.push_back(L"You dont have enough money to go higher!");;
 
 		};
 		//Decreasing bet amount by 1.
@@ -243,7 +248,7 @@ void Input() {
 			}
 			else {
 				for (int i = 0; i < game.mainText.lines.size(); i++) {
-					if (game.mainText.lines[i] != "Cant go lower!") {
+					if (game.mainText.lines[i] != L"Cant go lower!") {
 						fail = true;
 					}
 
@@ -251,7 +256,7 @@ void Input() {
 			}
 			game.displayChanged = false;
 			EnterBet();
-			if (fail) game.mainText.lines.push_back("Cant go lower!");;
+			if (fail) game.mainText.lines.push_back(L"Cant go lower!");;
 
 		};
 		break;
@@ -298,21 +303,21 @@ void DisplayMenu() {
 	if (game.displayChanged) return;
 	game.afterPrint.clear();
 	ClearCenterText();
-	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("What would you like to do?");
-	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("1) Play the Game!");
-	game.mainText.lines.push_back("2) View the Credits!");
-	game.mainText.lines.push_back("3) Quit :(");
-	game.mainText.lines.push_back("4) View my bank acount!");
-	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("Balance: $" + to_string(game.currentMoney));
+	game.mainText.lines.push_back(L"");
+	game.mainText.lines.push_back(L"What would you like to do?");
+	game.mainText.lines.push_back(L"");
+	game.mainText.lines.push_back(L"1) Play the Game!");
+	game.mainText.lines.push_back(L"2) View the Credits!");
+	game.mainText.lines.push_back(L"3) Quit :(L");
+	game.mainText.lines.push_back(L"4) View my bank acount!");
+	game.mainText.lines.push_back(L"");
+	game.mainText.lines.push_back(L"");
+	game.mainText.lines.push_back(L"Balance: $" + to_wstring(game.currentMoney));
 
 	DisplayInformation();
-	game.rightText.lines.push_back("");
-	game.rightText.lines.push_back("Pressing '1','2','3', or '4' will do something");
-	game.rightText.lines.push_back("(As indicated on the left)");
+	game.rightText.lines.push_back(L"");
+	game.rightText.lines.push_back(L"Pressing '1','2','3', or '4' will do something");
+	game.rightText.lines.push_back(L"(As indicated on the left)");
 
 	UpdateScreen();
 	game.displayChanged = true;
@@ -324,14 +329,14 @@ void DisplayAccount() {
 	ClearCenterText();
 
 
-	for (string string : game.mainText.bankStatements) {
+	for (wstring string : game.mainText.bankStatements) {
 		game.mainText.lines.push_back(string);
 	}
 
-	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("Current Balance: $" + to_string(game.currentMoney));
-	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("Press 'M' to go back to the Menu");
+	game.mainText.lines.push_back(L"");
+	game.mainText.lines.push_back(L"Current Balance: $" + to_wstring(game.currentMoney));
+	game.mainText.lines.push_back(L"");
+	game.mainText.lines.push_back(L"Press 'M' to go back to the Menu");
 
 	DisplayControls();
 
@@ -343,18 +348,18 @@ void DisplayAccount() {
 void DisplayCredits() {
 	if (game.displayChanged) return;
 	ClearCenterText();
-	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("This game was made with love by me:");
-	game.mainText.lines.push_back("KeaneCarotenuto@gmail.com");
-	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("I used ascii art from:");
-	game.mainText.lines.push_back("www.oocities.org/spunk1111/electro.htm");
-	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("It was requested to include the link below:");
-	game.mainText.lines.push_back("www.ascii-art.com");
-	game.mainText.lines.push_back("Unfortunately this link does not work.");
-	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("Press 'M' to go back to the Menu.");
+	game.mainText.lines.push_back(L"");
+	game.mainText.lines.push_back(L"This game was made with love by me:");
+	game.mainText.lines.push_back(L"KeaneCarotenuto@gmail.com");
+	game.mainText.lines.push_back(L"");
+	game.mainText.lines.push_back(L"I used ascii art from:");
+	game.mainText.lines.push_back(L"www.oocities.org/spunk1111/electro.htm");
+	game.mainText.lines.push_back(L"");
+	game.mainText.lines.push_back(L"It was requested to include the link below:");
+	game.mainText.lines.push_back(L"www.ascii-art.com");
+	game.mainText.lines.push_back(L"Unfortunately this link does not work.");
+	game.mainText.lines.push_back(L"");
+	game.mainText.lines.push_back(L"Press 'M' to go back to the Menu.");
 
 	UpdateScreen();
 	game.displayChanged = true;
@@ -364,18 +369,18 @@ void DisplayCredits() {
 void DisplaySlot() {
 	if (game.displayChanged) return;
 	ClearCenterText();
-	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("You Approach the Slot Machine");
-	game.mainText.lines.push_back("");
+	game.mainText.lines.push_back(L"");
+	game.mainText.lines.push_back(L"You Approach the Slot Machine");
+	game.mainText.lines.push_back(L"");
 	writeMachine();
-	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("Tip: Press 'E' to enter the bet amount");
+	game.mainText.lines.push_back(L"");
+	game.mainText.lines.push_back(L"Tip: Press 'E' to enter the bet amount");
 
 	DisplayControls();
-	game.rightText.lines.push_back("");
-	game.rightText.lines.push_back("Press 'E' To Start Betting");
-	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("Press 'M' to go back to the Menu");
+	game.rightText.lines.push_back(L"");
+	game.rightText.lines.push_back(L"Press 'E' To Start Betting");
+	game.mainText.lines.push_back(L"");
+	game.mainText.lines.push_back(L"Press 'M' to go back to the Menu");
 
 	UpdateScreen();
 	game.displayChanged = true;
@@ -385,24 +390,24 @@ void DisplaySlot() {
 void EnterBet() {
 	if (game.displayChanged) return;
 	ClearCenterText();
-	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("You begin to enter your bet amount");
-	game.mainText.lines.push_back("");
+	game.mainText.lines.push_back(L"");
+	game.mainText.lines.push_back(L"You begin to enter your bet amount");
+	game.mainText.lines.push_back(L"");
 	writeMachine();
-	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("Bet Amount: " + to_string(game.betAmount));
-	game.mainText.lines.push_back("Balance: $" + to_string(game.currentMoney));
-	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("Press 'P' to place the bet!");
-	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("Press 'M' to go back to the Menu");
+	game.mainText.lines.push_back(L"");
+	game.mainText.lines.push_back(L"Bet Amount: " + to_wstring(game.betAmount));
+	game.mainText.lines.push_back(L"Balance: $" + to_wstring(game.currentMoney));
+	game.mainText.lines.push_back(L"");
+	game.mainText.lines.push_back(L"Press 'P' to place the bet!");
+	game.mainText.lines.push_back(L"");
+	game.mainText.lines.push_back(L"Press 'M' to go back to the Menu");
 	DisplayControls();
-	game.rightText.lines.push_back("");
-	game.rightText.lines.push_back("Press 'up arrow key' to increase the bet amount by 100");
-	game.rightText.lines.push_back("Press 'down arrow key' to decrease the bet amount 100");
-	game.rightText.lines.push_back("Press 'right arrow key' to increase the bet amount 1");
-	game.rightText.lines.push_back("Press 'left arrow key' to decrease the bet amount 1");
-	game.rightText.lines.push_back("Press 'P' to place the bet!");
+	game.rightText.lines.push_back(L"");
+	game.rightText.lines.push_back(L"Press 'up arrow key' to increase the bet amount by 100");
+	game.rightText.lines.push_back(L"Press 'down arrow key' to decrease the bet amount 100");
+	game.rightText.lines.push_back(L"Press 'right arrow key' to increase the bet amount 1");
+	game.rightText.lines.push_back(L"Press 'left arrow key' to decrease the bet amount 1");
+	game.rightText.lines.push_back(L"Press 'P' to place the bet!");
 
 	UpdateScreen();
 	game.displayChanged = true;
@@ -412,19 +417,19 @@ void EnterBet() {
 void WatchSlotMachine() {
 	if (game.displayChanged) return;
 	game.currentMoney -= game.betAmount;
-	game.mainText.bankStatements.push_back("Sent    : $" + to_string(game.betAmount) + "    To: Casino");
+	game.mainText.bankStatements.push_back(L"Sent    : $" + to_wstring(game.betAmount) + L"    To: Casino");
 
 	ClearCenterText();
-	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("You Watch as the Machine spins");
-	game.mainText.lines.push_back("");
+	game.mainText.lines.push_back(L"");
+	game.mainText.lines.push_back(L"You Watch as the Machine spins");
+	game.mainText.lines.push_back(L"");
 	writeMachine();
-	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("Wooo! Lets get that jackpot!");
+	game.mainText.lines.push_back(L"");
+	game.mainText.lines.push_back(L"Wooo! Lets get that jackpot!");
 	
 	DisplayControls();
-	game.rightText.lines.push_back("");
-	game.rightText.lines.push_back("All you can do is watch!");
+	game.rightText.lines.push_back(L"");
+	game.rightText.lines.push_back(L"All you can do is watch!");
 
 	game.afterPrint.clear();
 
@@ -440,29 +445,29 @@ void WatchSlotMachine() {
 			game.slotNumbers[0][x] = rand() % 9 + 1;
 		}
 
-		game.afterPrint.push_back({ {10,7}, to_string(game.slotNumbers[0][0]), 14 });
-		game.afterPrint.push_back({ {14,7}, to_string(game.slotNumbers[0][1]), 14 });
-		game.afterPrint.push_back({ {18,7}, to_string(game.slotNumbers[0][2]), 14 });
+		game.afterPrint.push_back({ {10,7}, to_wstring(game.slotNumbers[0][0]), 14 });
+		game.afterPrint.push_back({ {14,7}, to_wstring(game.slotNumbers[0][1]), 14 });
+		game.afterPrint.push_back({ {18,7}, to_wstring(game.slotNumbers[0][2]), 14 });
 
-		game.afterPrint.push_back({ {10,8}, to_string(game.slotNumbers[1][0]), 14 });
-		game.afterPrint.push_back({ {14,8}, to_string(game.slotNumbers[1][1]), 14 });
-		game.afterPrint.push_back({ {18,8}, to_string(game.slotNumbers[1][2]), 14 });
+		game.afterPrint.push_back({ {10,8}, to_wstring(game.slotNumbers[1][0]), 14 });
+		game.afterPrint.push_back({ {14,8}, to_wstring(game.slotNumbers[1][1]), 14 });
+		game.afterPrint.push_back({ {18,8}, to_wstring(game.slotNumbers[1][2]), 14 });
 
-		game.afterPrint.push_back({ {10,9}, to_string(game.slotNumbers[2][0]), 14 });
-		game.afterPrint.push_back({ {14,9}, to_string(game.slotNumbers[2][1]), 14 });
-		game.afterPrint.push_back({ {18,9}, to_string(game.slotNumbers[2][2]), 14 });
+		game.afterPrint.push_back({ {10,9}, to_wstring(game.slotNumbers[2][0]), 14 });
+		game.afterPrint.push_back({ {14,9}, to_wstring(game.slotNumbers[2][1]), 14 });
+		game.afterPrint.push_back({ {18,9}, to_wstring(game.slotNumbers[2][2]), 14 });
 		
 		UpdateScreen(true);
 		Sleep(400);
 	}
 
 	ClearCenterText();
-	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("The machine stops Spinning");
-	game.mainText.lines.push_back("");
+	game.mainText.lines.push_back(L"");
+	game.mainText.lines.push_back(L"The machine stops Spinning");
+	game.mainText.lines.push_back(L"");
 	writeMachine();
-	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("Spin Complete!");
+	game.mainText.lines.push_back(L"");
+	game.mainText.lines.push_back(L"Spin Complete!");
 	UpdateScreen();
 	Sleep(1000);
 
@@ -476,22 +481,22 @@ void DisplayWinnings() {
 	if (game.displayChanged) return;
 	ClearCenterText();
 	
-	game.mainText.lines.push_back("");
-	game.mainText.lines.push_back("You look at the results of your bet");
-	game.mainText.lines.push_back("");
+	game.mainText.lines.push_back(L"");
+	game.mainText.lines.push_back(L"You look at the results of your bet");
+	game.mainText.lines.push_back(L"");
 	writeMachine();
-	game.mainText.lines.push_back("");
+	game.mainText.lines.push_back(L"");
 
 	DisplayControls();
-	game.rightText.lines.push_back("");
-	game.rightText.lines.push_back("All you can do is watch!");
+	game.rightText.lines.push_back(L"");
+	game.rightText.lines.push_back(L"All you can do is watch!");
 
 	UpdateScreen();
 
 	DisplayControls();
-	game.rightText.lines.push_back("");
-	game.rightText.lines.push_back("Press 'R' to Retry");
-	game.rightText.lines.push_back("Press 'S' to Stop");
+	game.rightText.lines.push_back(L"");
+	game.rightText.lines.push_back(L"Press 'R' to Retry");
+	game.rightText.lines.push_back(L"Press 'S' to Stop");
 
 
 	game.afterPrint.clear();
@@ -501,49 +506,49 @@ void DisplayWinnings() {
 		game.slotNumbers[1][1] == 7 &&
 		game.slotNumbers[1][2] == 7) {
 		
-		game.afterPrint.push_back({ {10,13}, "JACKPOT!x10", 10 });
-		game.afterPrint.push_back({ {10,12}, "TRIPLES x5", 12 });
-		game.afterPrint.push_back({ {10,11}, "DOUBLES x3", 12 });
+		game.afterPrint.push_back({ {10,13}, L"JACKPOT!x10", 10 });
+		game.afterPrint.push_back({ {10,12}, L"TRIPLES x5", 12 });
+		game.afterPrint.push_back({ {10,11}, L"DOUBLES x3", 12 });
 
 		game.currentMoney += game.betAmount * 10;
 
-		game.mainText.lines.push_back("You Just Gained $" + to_string(game.betAmount * 10));
-		game.mainText.bankStatements.push_back("Recieved: $" + to_string(game.betAmount * 10) + "    From: Casino");
+		game.mainText.lines.push_back(L"You Just Gained $" + to_wstring(game.betAmount * 10));
+		game.mainText.bankStatements.push_back(L"Recieved: $" + to_wstring(game.betAmount * 10) + L"    From: Casino");
 	}
 	else if (game.slotNumbers[1][0] == game.slotNumbers[1][1] &&
 		game.slotNumbers[1][0] == game.slotNumbers[1][2] &&
 		game.slotNumbers[1][1] == game.slotNumbers[1][2]) {
 
-		game.afterPrint.push_back({ {10,13}, "JACKPOT!x10", 12 });
-		game.afterPrint.push_back({ {10,12}, "TRIPLES x5", 10 });
-		game.afterPrint.push_back({ {10,11}, "DOUBLES x3", 12 });
+		game.afterPrint.push_back({ {10,13}, L"JACKPOT!x10", 12 });
+		game.afterPrint.push_back({ {10,12}, L"TRIPLES x5", 10 });
+		game.afterPrint.push_back({ {10,11}, L"DOUBLES x3", 12 });
 
 		game.currentMoney += game.betAmount * 5;
 
-		game.mainText.lines.push_back("You Just Won $" + to_string(game.betAmount * 5));
-		game.mainText.bankStatements.push_back("Recieved: $" + to_string(game.betAmount * 5) + "    From: Casino");
+		game.mainText.lines.push_back(L"You Just Won $" + to_wstring(game.betAmount * 5));
+		game.mainText.bankStatements.push_back(L"Recieved: $" + to_wstring(game.betAmount * 5) + L"    From: Casino");
 	}
 	else if (game.slotNumbers[1][0] == game.slotNumbers[1][1] ||
 		game.slotNumbers[1][0] == game.slotNumbers[1][2] ||
 		game.slotNumbers[1][1] == game.slotNumbers[1][2]) {
 
-		game.afterPrint.push_back({ {10,13}, "JACKPOT!x10", 12 });
-		game.afterPrint.push_back({ {10,12}, "TRIPLES x5", 12 });
-		game.afterPrint.push_back({ {10,11}, "DOUBLES x3", 10 });
+		game.afterPrint.push_back({ {10,13}, L"JACKPOT!x10", 12 });
+		game.afterPrint.push_back({ {10,12}, L"TRIPLES x5", 12 });
+		game.afterPrint.push_back({ {10,11}, L"DOUBLES x3", 10 });
 
 		game.currentMoney += game.betAmount * 3;
 
-		game.mainText.lines.push_back("You Just Won $" + to_string(game.betAmount * 3));
-		game.mainText.bankStatements.push_back("Recieved: $" + to_string(game.betAmount * 3) + "    From: Casino");
+		game.mainText.lines.push_back(L"You Just Won $" + to_wstring(game.betAmount * 3));
+		game.mainText.bankStatements.push_back(L"Recieved: $" + to_wstring(game.betAmount * 3) + L"    From: Casino");
 	}
 	else {
-		game.afterPrint.push_back({ {10,13}, "JACKPOT!x10", 12 });
-		game.afterPrint.push_back({ {10,12}, "TRIPLES x5", 12 });
-		game.afterPrint.push_back({ {10,11}, "DOUBLES x3", 12 });
+		game.afterPrint.push_back({ {10,13}, L"JACKPOT!x10", 12 });
+		game.afterPrint.push_back({ {10,12}, L"TRIPLES x5", 12 });
+		game.afterPrint.push_back({ {10,11}, L"DOUBLES x3", 12 });
 
-		game.mainText.lines.push_back("You Just Lost $" + to_string(game.betAmount));
+		game.mainText.lines.push_back(L"You Just Lost $" + to_wstring(game.betAmount));
 	}
-	game.mainText.lines.push_back("Balance: $" + to_string(game.currentMoney));
+	game.mainText.lines.push_back(L"Balance: $" + to_wstring(game.currentMoney));
 
 
 	game.betAmount = 1;
@@ -553,11 +558,11 @@ void DisplayWinnings() {
 
 	//Checks if the player has lost all of thier money, kicks them to the menu and gives them another $1k.
 	if (game.currentMoney <= 0) {
-		game.mainText.lines.push_back("");
-		game.mainText.lines.push_back("OOPS! Please Wait");
+		game.mainText.lines.push_back(L"");
+		game.mainText.lines.push_back(L"OOPS! Please Wait");
 		DisplayControls();
-		game.rightText.lines.push_back("");
-		game.rightText.lines.push_back("You Lost, wait to be kicked out...");
+		game.rightText.lines.push_back(L"");
+		game.rightText.lines.push_back(L"You Lost, wait to be kicked out...");
 		
 		UpdateScreen();
 
@@ -566,27 +571,27 @@ void DisplayWinnings() {
 		ClearCenterText();
 		game.afterPrint.clear();
 
-		game.mainText.lines.push_back("");
-		game.mainText.lines.push_back("You Just lost the game...");
-		game.mainText.lines.push_back("You Ran out of money");
-		game.mainText.lines.push_back("");
-		game.mainText.lines.push_back("Sorry, gotta kick you out of the Casino");
-		game.mainText.lines.push_back("Goodbye! (in 5 seconds)");
+		game.mainText.lines.push_back(L"");
+		game.mainText.lines.push_back(L"You Just lost the game...");
+		game.mainText.lines.push_back(L"You Ran out of money");
+		game.mainText.lines.push_back(L"");
+		game.mainText.lines.push_back(L"Sorry, gotta kick you out of the Casino");
+		game.mainText.lines.push_back(L"Goodbye! (in 5 seconds)");
 		UpdateScreen();
 
 		Sleep(5000);
 
 		game.currentMoney = 2000;
-		game.mainText.bankStatements.push_back("Recieved: $2000    From: Mom");
+		game.mainText.bankStatements.push_back(L"Recieved: $2000    From: Mom");
 
 
 		game.state = 1;
 		game.displayChanged = false;
 	}
 	else {
-		game.mainText.lines.push_back("");
-		game.mainText.lines.push_back("Press 'R' to Retry");
-		game.mainText.lines.push_back("Press 'S' to Stop betting");
+		game.mainText.lines.push_back(L"");
+		game.mainText.lines.push_back(L"Press 'R' to Retry");
+		game.mainText.lines.push_back(L"Press 'S' to Stop betting");
 	}
 	UpdateScreen();
 }
@@ -596,22 +601,22 @@ void DisplayWinnings() {
 #pragma region "ASCII Slot Machine Function"
 //Used to display the actual slot machine, instead of writng it out every time.
 void writeMachine() {
-	game.mainText.lines.push_back("          .-------.");
-	game.mainText.lines.push_back("       oO{- SLOTS -}Oo");
-	game.mainText.lines.push_back("       .=============. __");
-	game.mainText.lines.push_back("       |  " + to_string(game.slotNumbers[0][0]) + "   " + to_string(game.slotNumbers[0][1]) + "   " + to_string(game.slotNumbers[0][2]) + "  |(  )");
-	game.mainText.lines.push_back("       |-["+to_string(game.slotNumbers[1][0])+"] [" + to_string(game.slotNumbers[1][1]) + "] [" + to_string(game.slotNumbers[1][2]) + "]-| ||");
-	game.mainText.lines.push_back("       |  " + to_string(game.slotNumbers[2][0]) + "   " + to_string(game.slotNumbers[2][1]) + "   " + to_string(game.slotNumbers[2][2]) + "  | ||");
-	game.mainText.lines.push_back("       |=============|_||");
-	game.mainText.lines.push_back("       |  DOUBLES x3 |--'");
-	game.mainText.lines.push_back("       |  TRIPLES x5 |");
-	game.mainText.lines.push_back("       |  JACKPOT!x10|");
-	game.mainText.lines.push_back("       |             |");
-	game.mainText.lines.push_back("       |      __ === |");
-	game.mainText.lines.push_back("       |_____/__\\____|");
-	game.mainText.lines.push_back("      /###############\\");
-	game.mainText.lines.push_back("     /#################\\");
-	game.mainText.lines.push_back("    |JGS================|");
+	game.mainText.lines.push_back(L"          .-------.");
+	game.mainText.lines.push_back(L"       oO{- SLOTS -}Oo");
+	game.mainText.lines.push_back(L"       ┌─────────────┐ __");
+	game.mainText.lines.push_back(L"       │  " + to_wstring(game.slotNumbers[0][0]) + L"   " + to_wstring(game.slotNumbers[0][1]) + L"   " + to_wstring(game.slotNumbers[0][2]) + L"  │(  )");
+	game.mainText.lines.push_back(L"       │-["+to_wstring(game.slotNumbers[1][0])+ L"] [" + to_wstring(game.slotNumbers[1][1]) + L"] [" + to_wstring(game.slotNumbers[1][2]) + L"]-│ ││");
+	game.mainText.lines.push_back(L"       │  " + to_wstring(game.slotNumbers[2][0]) + L"   " + to_wstring(game.slotNumbers[2][1]) + L"   " + to_wstring(game.slotNumbers[2][2]) + L"  │ ││");
+	game.mainText.lines.push_back(L"       ├─────────────┤─\u2518│");
+	game.mainText.lines.push_back(L"       │  DOUBLES x3 │──\u2518");
+	game.mainText.lines.push_back(L"       │  TRIPLES x5 │");
+	game.mainText.lines.push_back(L"       │  JACKPOT!x10│");
+	game.mainText.lines.push_back(L"       │             │");
+	game.mainText.lines.push_back(L"       │      __ ─── │");
+	game.mainText.lines.push_back(L"       │_____/__\\____│");
+	game.mainText.lines.push_back(L"      /###############\\");
+	game.mainText.lines.push_back(L"     /#################\\");
+	game.mainText.lines.push_back(L"    │JGS────────────────│");
 }
 #pragma endregion
 
@@ -620,18 +625,18 @@ void writeMachine() {
 //Displays game information on the right.
 void DisplayInformation() {
 	ClearRightText();
-	game.rightText.lines.push_back("Information:");
-	game.rightText.lines.push_back("This is the game of Slots!");
-	game.rightText.lines.push_back("You can bet your fake money, to win or lose more fake money!");
-	game.rightText.lines.push_back("");
-	game.rightText.lines.push_back("-The goal of the Game is to gain as much money as you can.");
-	game.rightText.lines.push_back("-To do that, bet your current money at the slot machine.");
-	game.rightText.lines.push_back("-You start with $2000, given to you by your Mom");
-	game.rightText.lines.push_back("      (PS. she thinks it's for school...)");
-	game.rightText.lines.push_back("-If you lose all of your money,");
-	game.rightText.lines.push_back(" your Mom will surely send you some more!");
-	game.rightText.lines.push_back("");
-	game.rightText.lines.push_back("Good luck and have fun!");
+	game.rightText.lines.push_back(L"Information:");
+	game.rightText.lines.push_back(L"This is the game of Slots!");
+	game.rightText.lines.push_back(L"You can bet your fake money, to win or lose more fake money!");
+	game.rightText.lines.push_back(L"");
+	game.rightText.lines.push_back(L"-The goal of the Game is to gain as much money as you can.");
+	game.rightText.lines.push_back(L"-To do that, bet your current money at the slot machine.");
+	game.rightText.lines.push_back(L"-You start with $2000, given to you by your Mom");
+	game.rightText.lines.push_back(L"      (PS. she thinks it's for school...)");
+	game.rightText.lines.push_back(L"-If you lose all of your money,");
+	game.rightText.lines.push_back(L" your Mom will surely send you some more!");
+	game.rightText.lines.push_back(L"");
+	game.rightText.lines.push_back(L"Good luck and have fun!");
 
 	UpdateScreen();
 }
@@ -639,12 +644,12 @@ void DisplayInformation() {
 //Displays general controls on the right.
 void DisplayControls() {
 	ClearRightText();
-	game.rightText.lines.push_back("Controls:");
-	game.rightText.lines.push_back("Pressing 'C' will bring up this menu.");
-	game.rightText.lines.push_back("Pressing 'I' will bring up the game information.");
-	game.rightText.lines.push_back("    (only in the menu)");
-	game.rightText.lines.push_back("Pressing 'M' will go back to the Menu.");
-	game.rightText.lines.push_back("Pressing 'Q' will quit the game.");
+	game.rightText.lines.push_back(L"Controls:");
+	game.rightText.lines.push_back(L"Pressing 'C' will bring up this menu.");
+	game.rightText.lines.push_back(L"Pressing 'I' will bring up the game information.");
+	game.rightText.lines.push_back(L"    (only in the menu)");
+	game.rightText.lines.push_back(L"Pressing 'M' will go back to the Menu.");
+	game.rightText.lines.push_back(L"Pressing 'Q' will quit the game.");
 
 	UpdateScreen();
 }
@@ -654,8 +659,8 @@ void AskQuit() {
 	game.askQuitTime = time(NULL);
 	game.quitting = true;
 	ClearRightText();
-	game.rightText.lines.push_back("Are you sure you want to quit?");
-	game.rightText.lines.push_back("Press 'Q' again to quit...");
+	game.rightText.lines.push_back(L"Are you sure you want to quit?");
+	game.rightText.lines.push_back(L"Press 'Q' again to quit...");
 
 	UpdateScreen();
 }
@@ -672,15 +677,15 @@ void ClearRightText() {
 
 	for (int y = game.rightText.position.y; y < (lines + game.rightText.position.y); y++) {
 		int lineLength = game.rightText.lines[i].length();
-		string toPrint;
+		wstring toPrint;
 		for (int x = 0; x < lineLength; x++) {
-			toPrint += " ";
+			toPrint += L" ";
 		}
 		Position tempPos{ game.rightText.position.x, y };
 		Print(tempPos, toPrint, 0);
 		i++;
 	}
-	for (string str : game.rightText.lines) {
+	for (wstring str : game.rightText.lines) {
 		game.rightText.lines.pop_back();
 	}
 }
@@ -691,15 +696,15 @@ void ClearCenterText() {
 	int lines = static_cast<int>(game.mainText.lines.size());
 	for (int y = game.mainText.position.y; y < (lines + game.mainText.position.y); y++) {
 		int lineLength = game.mainText.lines[i].length();
-		string toPrint;
+		wstring toPrint;
 		for (int x = 0; x < lineLength; x++) {
-			toPrint += " ";
+			toPrint += L" ";
 		}
 		Position tempPos{ game.mainText.position.x, y };
 		Print(tempPos, toPrint, 0);
 		i++;
 	}
-	for (string str : game.mainText.lines) {
+	for (wstring str : game.mainText.lines) {
 		game.mainText.lines.pop_back();
 	}
 }
@@ -730,10 +735,10 @@ void UpdateScreen(bool onlyAfter) {
 
 #pragma region "Printing Functions"
 //Used to print out text at the specified coordinate, with the specified effect.
-void Print(Position pos,string str, int effect) {
+void Print(Position pos, wstring str, int effect) {
 	GotoXY(pos, 1);
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), effect);
-	cout << str;
+	wcout << str;
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 }
 
