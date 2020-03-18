@@ -195,7 +195,7 @@ void Input() {
 				}
 			}
 			game.displayChanged = false;
-			EnterBet();
+
 			if (fail) game.mainText.lines.push_back(L"You dont have enough money to go higher!");;
 			
 		};
@@ -217,7 +217,7 @@ void Input() {
 				}
 			}
 			game.displayChanged = false;
-			EnterBet();
+
 			if (fail) game.mainText.lines.push_back(L"Cant go lower!");;
 
 		};
@@ -236,7 +236,7 @@ void Input() {
 				}
 			}
 			game.displayChanged = false;
-			EnterBet();
+
 			if (fail) game.mainText.lines.push_back(L"You dont have enough money to go higher!");;
 
 		};
@@ -255,7 +255,7 @@ void Input() {
 				}
 			}
 			game.displayChanged = false;
-			EnterBet();
+
 			if (fail) game.mainText.lines.push_back(L"Cant go lower!");;
 
 		};
