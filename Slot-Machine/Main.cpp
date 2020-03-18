@@ -308,7 +308,7 @@ void DisplayMenu() {
 	game.mainText.lines.push_back(L"");
 	game.mainText.lines.push_back(L"1) Play the Game!");
 	game.mainText.lines.push_back(L"2) View the Credits!");
-	game.mainText.lines.push_back(L"3) Quit :(L");
+	game.mainText.lines.push_back(L"3) Quit :(");
 	game.mainText.lines.push_back(L"4) View my bank acount!");
 	game.mainText.lines.push_back(L"");
 	game.mainText.lines.push_back(L"");
