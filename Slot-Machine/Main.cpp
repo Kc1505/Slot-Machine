@@ -110,7 +110,7 @@ void DisplayAccount();
 #pragma region  "Start Functions"
 //Starting Mian function.
 int main() {
-	_setmode(_fileno(stdout), _O_U16TEXT);
+	(void)_setmode(_fileno(stdout), _O_U16TEXT);
 
 	Start();
 
@@ -125,7 +125,7 @@ int main() {
 //Function that is executed only once before the game actually starts, used to initialise some values.
 void Start() {
 	game.startTime = time(NULL);
-	srand(game.startTime);
+	srand(static_cast<unsigned int>(game.startTime));
 
 	Position tempPos{ (((game.rightText.position.x) - (game.position.x) - static_cast<int>(game.title.length()))/2),(game.position.y)};
 	Print(tempPos, game.title, 14);
@@ -280,7 +280,7 @@ void Input() {
 	}
 
 	//Goes back to menu state
-	if (GetKeyState('M') & 0x8000 &&  (game.state != 4)) { game.state = 1; game.displayChanged = false; }
+	if (GetKeyState('M') & 0x8000 &&  game.state != 4 && game.state != 1) { game.state = 1; game.displayChanged = false; }
 
 	//Asks the user if they want to quit, then quits if yes.
 	if (GetKeyState('Q') & 0x8000) {
@@ -687,7 +687,7 @@ void ClearRightText() {
 	int lines = static_cast<int>(game.rightText.lines.size());
 
 	for (int y = game.rightText.position.y; y < (lines + game.rightText.position.y); y++) {
-		int lineLength = game.rightText.lines[i].length();
+		int lineLength = static_cast<unsigned int>(game.rightText.lines[i].length());
 		wstring toPrint;
 		for (int x = 0; x < lineLength; x++) {
 			toPrint += L" ";
@@ -706,7 +706,7 @@ void ClearCenterText() {
 	int i = 0;
 	int lines = static_cast<int>(game.mainText.lines.size());
 	for (int y = game.mainText.position.y; y < (lines + game.mainText.position.y); y++) {
-		int lineLength = game.mainText.lines[i].length();
+		int lineLength = static_cast<unsigned int>(game.mainText.lines[i].length());
 		wstring toPrint;
 		for (int x = 0; x < lineLength; x++) {
 			toPrint += L" ";
