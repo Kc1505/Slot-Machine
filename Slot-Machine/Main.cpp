@@ -116,7 +116,7 @@ int main() {
 
 	while (game.running) {
 		Update();
-		Sleep(100);
+		Sleep(10);
 	}
 
 	return 0;
@@ -442,7 +442,7 @@ void WatchSlotMachine() {
 			game.slotNumbers[1][x] = game.slotNumbers[0][x];
 		}
 		for (int x = 0; x < 3; x++) {
-			game.slotNumbers[0][x] = rand() % 9 + 1;
+			game.slotNumbers[0][x] = rand() % 6 + 2;
 		}
 
 		game.afterPrint.push_back({ {10,7}, to_wstring(game.slotNumbers[0][0]), game.slotNumbers[0][0] });
