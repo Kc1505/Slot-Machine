@@ -52,7 +52,7 @@ public:
 	time_t startTime = 0;
 	time_t askQuitTime = 0;
 
-	wstring title = L"Welcome to Slots!";
+	wstring title = L"Welcome to Slots!    (By Keane.C)";
 	
 	//position of the game window.
 	Position position{0,0};
@@ -66,11 +66,11 @@ public:
 
 	}mainText;
 
-	//The Text that is used to display the infortmation and controls on the right of the console.
+	//The Text that is used to display the information and controls on the right of the console.
 	class RightText {
 	public:
 		vector<wstring> lines;
-		Position position{50,1};
+		Position position{55,1};
 
 	}rightText;
 
@@ -85,6 +85,7 @@ public:
 
 //Declaring all of the functions used in the program.
 void Start();
+void Setup();
 void Update();
 void Print(Position pos, wstring str, int effect);
 void GotoXY(Position pos, int multi);
@@ -92,6 +93,7 @@ void Input();
 void UpdateScreen(bool onlyAfter = 0);
 void ClearRightText();
 void ClearCenterText();
+void ClearAfterPrint();
 void DisplayInformation();
 void DisplayControls();
 void DisplayMenu();
@@ -124,6 +126,8 @@ int main() {
 
 //Function that is executed only once before the game actually starts, used to initialise some values.
 void Start() {
+	Setup();
+
 	game.startTime = time(NULL);
 	srand(static_cast<unsigned int>(game.startTime));
 
@@ -133,6 +137,35 @@ void Start() {
 	tempPos.x = game.rightText.position.x;
 	tempPos.y = game.rightText.position.y - 1;
 	Print(tempPos, L"'C' to open Controls." , 10);
+}
+
+void Setup() {
+	SetConsoleDisplayMode(GetStdHandle(STD_OUTPUT_HANDLE), CONSOLE_FULLSCREEN_MODE, 0);
+
+	HANDLE hstdout = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	GetConsoleScreenBufferInfo(hstdout, &csbi);
+
+	csbi.dwSize.X = csbi.dwMaximumWindowSize.X;
+	csbi.dwSize.Y = csbi.dwMaximumWindowSize.Y;
+	SetConsoleScreenBufferSize(hstdout, csbi.dwSize);
+
+	HWND x = GetConsoleWindow();
+	ShowScrollBar(x, SB_BOTH, FALSE);
+
+	::SendMessage(::GetConsoleWindow(), WM_SYSKEYDOWN, VK_RETURN, 0x20000000);
+
+	PCONSOLE_FONT_INFOEX lpConsoleCurrentFontEx = new CONSOLE_FONT_INFOEX();
+	lpConsoleCurrentFontEx->cbSize = sizeof(CONSOLE_FONT_INFOEX);
+	GetCurrentConsoleFontEx(hstdout, 0, lpConsoleCurrentFontEx);
+	lpConsoleCurrentFontEx->dwFontSize.X = 30;
+	lpConsoleCurrentFontEx->dwFontSize.Y = 30;
+	SetCurrentConsoleFontEx(hstdout, 0, lpConsoleCurrentFontEx);
+
+	CONSOLE_CURSOR_INFO info;
+	info.dwSize = 100;
+	info.bVisible = FALSE;
+	SetConsoleCursorInfo(hstdout, &info);
 }
 
 //The Main Update Function, called after every 100ms + execute time.
@@ -194,7 +227,7 @@ void Input() {
 
 				}
 			}
-			game.displayChanged = false;
+			Sleep(100);
 
 			if (fail) game.mainText.lines.push_back(L"You dont have enough money to go higher!");;
 			
@@ -216,7 +249,7 @@ void Input() {
 
 				}
 			}
-			game.displayChanged = false;
+			Sleep(100);
 
 			if (fail) game.mainText.lines.push_back(L"Cant go lower!");;
 
@@ -235,7 +268,7 @@ void Input() {
 
 				}
 			}
-			game.displayChanged = false;
+			Sleep(100);
 
 			if (fail) game.mainText.lines.push_back(L"You dont have enough money to go higher!");;
 
@@ -254,11 +287,16 @@ void Input() {
 
 				}
 			}
-			game.displayChanged = false;
+			Sleep(100);
 
 			if (fail) game.mainText.lines.push_back(L"Cant go lower!");;
 
 		};
+		
+		ClearAfterPrint();
+		game.afterPrint.push_back({ {6,21}, L"Bet Amount: " + to_wstring(game.betAmount), 10 });
+		UpdateScreen(true);
+
 		break;
 
 	case 4: //State that simple shows slow machine spinning.
@@ -301,7 +339,8 @@ void Input() {
 //Displays all of the text relevant to the menu.
 void DisplayMenu() {
 	if (game.displayChanged) return;
-	game.afterPrint.clear();
+	ClearAfterPrint();
+
 	ClearCenterText();
 	game.mainText.lines.push_back(L"");
 	game.mainText.lines.push_back(L"What would you like to do?");
@@ -390,16 +429,19 @@ void DisplaySlot() {
 void EnterBet() {
 	if (game.displayChanged) return;
 	ClearCenterText();
+	
 	game.mainText.lines.push_back(L"");
 	game.mainText.lines.push_back(L"You begin to enter your bet amount");
 	game.mainText.lines.push_back(L"");
 	writeMachine();
 	game.mainText.lines.push_back(L"");
-	game.mainText.lines.push_back(L"Bet Amount: " + to_wstring(game.betAmount));
+	game.mainText.lines.push_back(L"");
+	game.mainText.lines.push_back(L"");
+	game.mainText.lines.push_back(L"");
 	game.mainText.lines.push_back(L"Balance: $" + to_wstring(game.currentMoney));
 	game.mainText.lines.push_back(L"");
-	game.mainText.lines.push_back(L"Press 'P' to place the bet!");
 	game.mainText.lines.push_back(L"");
+	game.mainText.lines.push_back(L"Press 'P' to place the bet!");
 	game.mainText.lines.push_back(L"Press 'M' to go back to the Menu");
 	DisplayControls();
 	game.rightText.lines.push_back(L"");
@@ -416,6 +458,7 @@ void EnterBet() {
 //Displays the slot machine generating random numbers, and then spinning.
 void WatchSlotMachine() {
 	if (game.displayChanged) return;
+	ClearAfterPrint();
 	game.currentMoney -= game.betAmount;
 	game.mainText.bankStatements.push_back(L"Sent    : $" + to_wstring(game.betAmount) + L"    To: Casino");
 
@@ -637,15 +680,21 @@ void writeMachine() {
 void DisplayInformation() {
 	ClearRightText();
 	game.rightText.lines.push_back(L"Information:");
+	game.rightText.lines.push_back(L"");
 	game.rightText.lines.push_back(L"This is the game of Slots!");
 	game.rightText.lines.push_back(L"You can bet your fake money, to win or lose more fake money!");
 	game.rightText.lines.push_back(L"");
+	game.rightText.lines.push_back(L"");
 	game.rightText.lines.push_back(L"-The goal of the Game is to gain as much money as you can.");
+	game.rightText.lines.push_back(L"");
 	game.rightText.lines.push_back(L"-To do that, bet your current money at the slot machine.");
+	game.rightText.lines.push_back(L"");
 	game.rightText.lines.push_back(L"-You start with $2000, given to you by your Mom");
 	game.rightText.lines.push_back(L"      (PS. she thinks it's for school...)");
+	game.rightText.lines.push_back(L"");
 	game.rightText.lines.push_back(L"-If you lose all of your money,");
 	game.rightText.lines.push_back(L" your Mom will surely send you some more!");
+	game.rightText.lines.push_back(L"");
 	game.rightText.lines.push_back(L"");
 	game.rightText.lines.push_back(L"Good luck and have fun!");
 
@@ -656,10 +705,14 @@ void DisplayInformation() {
 void DisplayControls() {
 	ClearRightText();
 	game.rightText.lines.push_back(L"Controls:");
+	game.rightText.lines.push_back(L"");
 	game.rightText.lines.push_back(L"Pressing 'C' will bring up this menu.");
+	game.rightText.lines.push_back(L"");
 	game.rightText.lines.push_back(L"Pressing 'I' will bring up the game information.");
 	game.rightText.lines.push_back(L"    (only in the menu)");
+	game.rightText.lines.push_back(L"");
 	game.rightText.lines.push_back(L"Pressing 'M' will go back to the Menu.");
+	game.rightText.lines.push_back(L"");
 	game.rightText.lines.push_back(L"Pressing 'Q' will quit the game.");
 
 	UpdateScreen();
@@ -717,6 +770,27 @@ void ClearCenterText() {
 	}
 	for (wstring str : game.mainText.lines) {
 		game.mainText.lines.pop_back();
+	}
+}
+
+void ClearAfterPrint() {
+	int tempX = 6;
+	int tempY = 21;
+
+	int i = 0;
+	int lines = static_cast<int>(game.afterPrint.size());
+	for (int y = tempY; y < (lines + tempY); y++) {
+		int lineLength = static_cast<unsigned int>(game.afterPrint[i].string.length() + 10);
+		wstring toPrint;
+		for (int x = tempX; x < lineLength; x++) {
+			toPrint += L" ";
+		}
+		Position tempPos{ tempX, y };
+		Print(tempPos, toPrint, 0);
+		i++;
+	}
+	for (AfterPrint aPrint : game.afterPrint) {
+		game.afterPrint.pop_back();
 	}
 }
 #pragma endregion
