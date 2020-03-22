@@ -3,8 +3,6 @@
 #include <time.h>
 #include <string>
 #include <vector>
-#include <locale>
-#include <codecvt>
 #include <io.h>
 #include <fcntl.h>
 
@@ -227,7 +225,6 @@ void Input() {
 
 				}
 			}
-			Sleep(100);
 
 			if (fail) game.mainText.lines.push_back(L"You dont have enough money to go higher!");;
 			
@@ -249,7 +246,6 @@ void Input() {
 
 				}
 			}
-			Sleep(100);
 
 			if (fail) game.mainText.lines.push_back(L"Cant go lower!");;
 
@@ -268,7 +264,6 @@ void Input() {
 
 				}
 			}
-			Sleep(100);
 
 			if (fail) game.mainText.lines.push_back(L"You dont have enough money to go higher!");;
 
@@ -287,7 +282,6 @@ void Input() {
 
 				}
 			}
-			Sleep(100);
 
 			if (fail) game.mainText.lines.push_back(L"Cant go lower!");;
 
@@ -296,6 +290,7 @@ void Input() {
 		ClearAfterPrint();
 		game.afterPrint.push_back({ {6,21}, L"Bet Amount: " + to_wstring(game.betAmount), 10 });
 		UpdateScreen(true);
+		Sleep(100);
 
 		break;
 
@@ -389,12 +384,9 @@ void DisplayCredits() {
 	game.mainText.lines.push_back(L"This game was made with love by me:");
 	game.mainText.lines.push_back(L"KeaneCarotenuto@gmail.com");
 	game.mainText.lines.push_back(L"");
-	game.mainText.lines.push_back(L"I used ascii art from:");
+	game.mainText.lines.push_back(L"I used and modifed ascii art from:");
 	game.mainText.lines.push_back(L"www.oocities.org/spunk1111/electro.htm");
 	game.mainText.lines.push_back(L"");
-	game.mainText.lines.push_back(L"It was requested to include the link below:");
-	game.mainText.lines.push_back(L"www.ascii-art.com");
-	game.mainText.lines.push_back(L"Unfortunately this link does not work.");
 	game.mainText.lines.push_back(L"");
 	game.mainText.lines.push_back(L"Press 'M' to go back to the Menu.");
 
