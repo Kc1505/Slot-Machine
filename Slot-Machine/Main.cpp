@@ -329,8 +329,6 @@ void Input() {
 			AskQuit();
 		}
 	}
-	
-
 }
 #pragma endregion
 
