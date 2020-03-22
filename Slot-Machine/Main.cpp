@@ -727,6 +727,7 @@ void AskQuit() {
 	game.rightText.lines.push_back(L"Press 'Q' again to quit...");
 
 	UpdateScreen();
+	Sleep(500);
 }
 #pragma endregion
 
