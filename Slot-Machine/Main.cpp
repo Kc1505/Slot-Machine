@@ -41,9 +41,9 @@ public:
 
 	//The current slot numbers at any given point. (used for rolling effect, and checking win).
 	int slotNumbers[3][3] = {
-		{1,2,3},
+		{2,2,2},
 		{7,7,7},
-		{4,5,6} 
+		{3,3,3} 
 	};
 
 	//Time values to control exit prompt delay.
@@ -98,7 +98,8 @@ void DisplayMenu();
 void DisplaySlot();
 void AskQuit();
 void EnterBet();
-void writeMachine();
+void SlotMachine();
+void SlotMachineAfter();
 void WatchSlotMachine();
 void DisplayCredits();
 void DisplayWinnings();
@@ -227,7 +228,7 @@ void Input() {
 			}
 
 			if (fail) game.mainText.lines.push_back(L"You dont have enough money to go higher!");;
-			
+			ClearAfterPrint();
 		};
 		//Decreasing bet amount by 100.
 		if (GetKeyState(VK_DOWN) & 0x8000) {
@@ -248,7 +249,7 @@ void Input() {
 			}
 
 			if (fail) game.mainText.lines.push_back(L"Cant go lower!");;
-
+			ClearAfterPrint();
 		};
 		//Increasing bet amount by 1.
 		if (GetKeyState(VK_RIGHT) & 0x8000) {
@@ -266,7 +267,7 @@ void Input() {
 			}
 
 			if (fail) game.mainText.lines.push_back(L"You dont have enough money to go higher!");;
-
+			ClearAfterPrint();
 		};
 		//Decreasing bet amount by 1.
 		if (GetKeyState(VK_LEFT) & 0x8000) {
@@ -284,10 +285,14 @@ void Input() {
 			}
 
 			if (fail) game.mainText.lines.push_back(L"Cant go lower!");;
-
+			ClearAfterPrint();
 		};
 		
-		ClearAfterPrint();
+		
+		game.afterPrint.push_back({ {10,13}, L"JACKPOT!x10", 12 });
+		game.afterPrint.push_back({ {10,12}, L"TRIPLES x5", 12 });
+		game.afterPrint.push_back({ {10,11}, L"DOUBLES x3", 12 });
+		SlotMachineAfter();
 		game.afterPrint.push_back({ {6,21}, L"Bet Amount: " + to_wstring(game.betAmount), 10 });
 		UpdateScreen(true);
 		Sleep(100);
@@ -401,7 +406,7 @@ void DisplaySlot() {
 	game.mainText.lines.push_back(L"");
 	game.mainText.lines.push_back(L"You Approach the Slot Machine");
 	game.mainText.lines.push_back(L"");
-	writeMachine();
+	SlotMachine();
 	game.mainText.lines.push_back(L"");
 	game.mainText.lines.push_back(L"Tip: Press 'E' to enter the bet amount");
 
@@ -423,7 +428,7 @@ void EnterBet() {
 	game.mainText.lines.push_back(L"");
 	game.mainText.lines.push_back(L"You begin to enter your bet amount");
 	game.mainText.lines.push_back(L"");
-	writeMachine();
+	SlotMachine();
 	game.mainText.lines.push_back(L"");
 	game.mainText.lines.push_back(L"");
 	game.mainText.lines.push_back(L"");
@@ -456,7 +461,7 @@ void WatchSlotMachine() {
 	game.mainText.lines.push_back(L"");
 	game.mainText.lines.push_back(L"You Watch as the Machine spins");
 	game.mainText.lines.push_back(L"");
-	writeMachine();
+	SlotMachine();
 	game.mainText.lines.push_back(L"");
 	game.mainText.lines.push_back(L"Wooo! Lets get that jackpot!");
 	
@@ -478,17 +483,7 @@ void WatchSlotMachine() {
 			game.slotNumbers[0][x] = rand() % 6 + 2;
 		}
 
-		game.afterPrint.push_back({ {10,7}, to_wstring(game.slotNumbers[0][0]), game.slotNumbers[0][0] });
-		game.afterPrint.push_back({ {14,7}, to_wstring(game.slotNumbers[0][1]), game.slotNumbers[0][1] });
-		game.afterPrint.push_back({ {18,7}, to_wstring(game.slotNumbers[0][2]), game.slotNumbers[0][2] });
-
-		game.afterPrint.push_back({ {10,8}, to_wstring(game.slotNumbers[1][0]), game.slotNumbers[1][0] });
-		game.afterPrint.push_back({ {14,8}, to_wstring(game.slotNumbers[1][1]), game.slotNumbers[1][1] });
-		game.afterPrint.push_back({ {18,8}, to_wstring(game.slotNumbers[1][2]), game.slotNumbers[1][2] });
-
-		game.afterPrint.push_back({ {10,9}, to_wstring(game.slotNumbers[2][0]), game.slotNumbers[2][0] });
-		game.afterPrint.push_back({ {14,9}, to_wstring(game.slotNumbers[2][1]), game.slotNumbers[2][1] });
-		game.afterPrint.push_back({ {18,9}, to_wstring(game.slotNumbers[2][2]), game.slotNumbers[2][2] });
+		SlotMachineAfter();
 		
 		UpdateScreen(true);
 		Sleep(400);
@@ -498,7 +493,7 @@ void WatchSlotMachine() {
 	game.mainText.lines.push_back(L"");
 	game.mainText.lines.push_back(L"The machine stops Spinning");
 	game.mainText.lines.push_back(L"");
-	writeMachine();
+	SlotMachine();
 	game.mainText.lines.push_back(L"");
 	game.mainText.lines.push_back(L"Spin Complete!");
 	UpdateScreen();
@@ -517,7 +512,7 @@ void DisplayWinnings() {
 	game.mainText.lines.push_back(L"");
 	game.mainText.lines.push_back(L"You look at the results of your bet");
 	game.mainText.lines.push_back(L"");
-	writeMachine();
+	SlotMachine();
 	game.mainText.lines.push_back(L"");
 
 	DisplayControls();
@@ -644,13 +639,13 @@ void DisplayWinnings() {
 
 #pragma region "ASCII Slot Machine Function"
 //Used to display the actual slot machine, instead of writng it out every time.
-void writeMachine() {
+void SlotMachine() {
 	game.mainText.lines.push_back(L"         ╔═════════╗");
 	game.mainText.lines.push_back(L"       ▀█║- SLOTS -║█▀");
 	game.mainText.lines.push_back(L"       ┌─┼─┬─┬─┬─┬─┼─┐ __");
-	game.mainText.lines.push_back(L"       │ │" + to_wstring(game.slotNumbers[0][0]) + L"│ │" + to_wstring(game.slotNumbers[0][1]) + L"│ │" + to_wstring(game.slotNumbers[0][2]) + L"│ │(  )");
-	game.mainText.lines.push_back(L"       ├─┤"+to_wstring(game.slotNumbers[1][0])+ L"├─┤" + to_wstring(game.slotNumbers[1][1]) + L"├─┤" + to_wstring(game.slotNumbers[1][2]) + L"├─┤ ││");
-	game.mainText.lines.push_back(L"       │ │" + to_wstring(game.slotNumbers[2][0]) + L"│ │" + to_wstring(game.slotNumbers[2][1]) + L"│ │" + to_wstring(game.slotNumbers[2][2]) + L"│ │ ││");
+	game.mainText.lines.push_back(L"       │ │ │ │ │ │ │ │(  )");
+	game.mainText.lines.push_back(L"       ├─┤ ├─┤ ├─┤ ├─┤ ││");
+	game.mainText.lines.push_back(L"       │ │ │ │ │ │ │ │ ││");
 	game.mainText.lines.push_back(L"       ├─┴─┴─┴─┴─┴─┴─┼─┘│");
 	game.mainText.lines.push_back(L"       │  DOUBLES x3 ├──┘");
 	game.mainText.lines.push_back(L"       │  TRIPLES x5 │");
@@ -661,6 +656,20 @@ void writeMachine() {
 	game.mainText.lines.push_back(L"     ┌┘└─────────────┘└┐");
 	game.mainText.lines.push_back(L"    ┌┘╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬└┐");
 	game.mainText.lines.push_back(L"    └───────────────────┘");
+}
+
+void SlotMachineAfter() {
+	game.afterPrint.push_back({ {10,7}, to_wstring(game.slotNumbers[0][0]), game.slotNumbers[0][0] });
+	game.afterPrint.push_back({ {14,7}, to_wstring(game.slotNumbers[0][1]), game.slotNumbers[0][1] });
+	game.afterPrint.push_back({ {18,7}, to_wstring(game.slotNumbers[0][2]), game.slotNumbers[0][2] });
+
+	game.afterPrint.push_back({ {10,8}, to_wstring(game.slotNumbers[1][0]), game.slotNumbers[1][0] });
+	game.afterPrint.push_back({ {14,8}, to_wstring(game.slotNumbers[1][1]), game.slotNumbers[1][1] });
+	game.afterPrint.push_back({ {18,8}, to_wstring(game.slotNumbers[1][2]), game.slotNumbers[1][2] });
+
+	game.afterPrint.push_back({ {10,9}, to_wstring(game.slotNumbers[2][0]), game.slotNumbers[2][0] });
+	game.afterPrint.push_back({ {14,9}, to_wstring(game.slotNumbers[2][1]), game.slotNumbers[2][1] });
+	game.afterPrint.push_back({ {18,9}, to_wstring(game.slotNumbers[2][2]), game.slotNumbers[2][2] });
 }
 #pragma endregion
 
@@ -765,24 +774,16 @@ void ClearCenterText() {
 }
 
 void ClearAfterPrint() {
-	int tempX = 6;
-	int tempY = 21;
 
-	int i = 0;
-	int lines = static_cast<int>(game.afterPrint.size());
-	for (int y = tempY; y < (lines + tempY); y++) {
-		int lineLength = static_cast<unsigned int>(game.afterPrint[i].string.length() + 10);
+	for (AfterPrint ap : game.afterPrint) {
 		wstring toPrint;
-		for (int x = tempX; x < lineLength; x++) {
+		for (int i = 0; i < static_cast<int>(ap.string.length()); i++) {
 			toPrint += L" ";
 		}
-		Position tempPos{ tempX, y };
-		Print(tempPos, toPrint, 0);
-		i++;
+		Print(ap.position, toPrint, 0);
 	}
-	for (AfterPrint aPrint : game.afterPrint) {
-		game.afterPrint.pop_back();
-	}
+
+	game.afterPrint.clear();
 }
 #pragma endregion
 
