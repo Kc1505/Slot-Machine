@@ -615,7 +615,7 @@ void DisplayWinnings() {
 		game.mainText.lines.push_back(L"You Ran out of money");
 		game.mainText.lines.push_back(L"");
 		game.mainText.lines.push_back(L"Sorry, gotta kick you out of the Casino");
-		game.mainText.lines.push_back(L"Goodbye! (in 5 seconds)");
+		game.mainText.lines.push_back(L"Your Game will Restart in 5 seconds!");
 		UpdateScreen();
 
 		Sleep(5000);
@@ -655,7 +655,7 @@ void SlotMachine() {
 	game.mainText.lines.push_back(L"      ┌┤ └─────────┘ ├┐");
 	game.mainText.lines.push_back(L"     ┌┘└─────────────┘└┐");
 	game.mainText.lines.push_back(L"    ┌┘╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬└┐");
-	game.mainText.lines.push_back(L"    └───────────────────┘");
+	game.mainText.lines.push_back(L"    └──jgs──────────────┘");
 }
 
 void SlotMachineAfter() {
